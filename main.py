@@ -3,6 +3,7 @@ import sys
 import ImageFilter
 import numpy as np
 import ImageTk
+import Tkinter as tk
 
 def wait():
 	raw_input("Press enter to continue")
@@ -10,6 +11,9 @@ def wait():
 def showImg(image, show):
 	if (show == "show"):
 		image.show()
+
+def callback(event):
+	print "click at ", event.x, event.y
 
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):
@@ -36,5 +40,11 @@ else:
 	print arr[0, 0] #each pixel
 
 	#tkinter to get user click from the screen
-	#ImageTk.BitmapImage(im)
-		
+	root = tk.Tk()
+	frameimage = ImageTk.PhotoImage(im)
+	panel1 = tk.Label(root, image=frameimage)
+	panel1.pack(side="top", fill="both", expand="yes")
+	panel1.bind("<Button-1>", callback)
+	panel1.image = frameimage	
+
+	root.mainloop()	
