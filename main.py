@@ -18,6 +18,7 @@ def callback(event):
 	print "click at ", event.x, event.y
 	print arr[event.y, event.x]
 	
+	
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):
 	sys.exit(0)
