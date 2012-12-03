@@ -8,4 +8,4 @@ class Wire:
 		self.pixelLoc.append(pixelloc)
 
 	def __str__(self):
-		return self.pixelLoc
+		return self.pixelLoc.__str__()
