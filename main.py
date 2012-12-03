@@ -4,8 +4,10 @@ import ImageFilter
 import numpy as np
 import ImageTk
 import Tkinter as tk
+from wire import Wire
 
 arr = [];
+wire1 = Wire()
 
 def wait():
 	raw_input("Press enter to continue")
@@ -14,10 +16,16 @@ def showImg(image, show):
 	if (show == "show"):
 		image.show()
 
+#metric of how close two rgb values are 
+# (just use euclidean distance for now)
+def closeRGB(rgb1, rgb2):
+	return np.linalg.norm(rgb1 - rgb2)
+
 def callback(event):
 	print "click at ", event.x, event.y
 	print arr[event.y, event.x]
-	
+	wire1.addPixelLoc([event.y, event.x])
+	print wire1	
 	
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):
