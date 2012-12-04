@@ -9,3 +9,6 @@ class Wire:
 
 	def __str__(self):
 		return self.pixelLoc.__str__()
+
+	def getPixelLoc(self):
+		return self.pixelLoc

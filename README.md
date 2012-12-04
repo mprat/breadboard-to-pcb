@@ -20,4 +20,5 @@ the images will be run. Otherwise, you will not see any images on the screen.
 
 
 TODO: 
-* rename the current "wire" class into "Component" and then make subclasses later 
+* rename the current "wire" class into "Component" and then make subclasses later
+* make a "visualize component" function 

@@ -10,6 +10,8 @@ arr = []
 wires = [] #array of Wire objects
 colorthresh = 10
 recursiondepth = 10
+im = []
+root = tk.Tk()
 
 def wait():
 	raw_input("Press enter to continue")
@@ -49,13 +51,20 @@ def makeWireHelper(pt, recurdepth):
 					toreturn.update(makeWireHelper(p, recurdepth - 1))
 	return toreturn	
 
+def seeWire(wire, frame):
+	for w in wire.getPixelLoc:
+		im.putpixel(w, [255, 255, 255])
+	frameimage = ImageTk.PhotoImage(im)
+	frame.image = frameimage
+
 def callback(event):
 	#print "click at ", event.x, event.y
 	#print arr[event.y, event.x]
 	wires.append(Wire())
 	#wires[-1].addPixelLoc([event.y, event.x])
 	makeWire(wires[-1], (event.y, event.x))
-	print wires[-1]	
+	print wires[-1]
+	seeWire(wires[-1], event.widget)	
 	
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):
@@ -82,7 +91,6 @@ else:
 	#print arr[0, 0] #each pixel
 
 	#tkinter to get user click from the screen
-	root = tk.Tk()
 	frameimage = ImageTk.PhotoImage(im)
 	panel1 = tk.Label(root, image=frameimage)
 	panel1.pack(side="top", fill="both", expand="yes")
