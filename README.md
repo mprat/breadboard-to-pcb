@@ -18,6 +18,12 @@ python main.py imgname.bmp show
 If the last argument is "show" then any debugging code to show the outputs of
 the images will be run. Otherwise, you will not see any images on the screen.
 
+INSTALLNOTES:
+* to get Tkinter to work in python, run
+sudo apt-get install tk8.5-dev tcl8.5-dev python-tk
+* download PIL and run python setup.py install in the directory after you uncompress it
+* it should work
+
 TOREMEMBER:
 * the numpy array and the python imaging library indices for the image are FLIPPED! (e.g. in numpy if you want to look up pixel i,j you do (arr[i], arr[j]) but in PIL you do im.putpixel((arr[j], arr[i]), (255, 255, 255))
 
