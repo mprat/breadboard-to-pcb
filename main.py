@@ -8,7 +8,7 @@ from wire import Wire
 
 arr = []
 wires = [] #array of Wire objects
-colorthresh = 10
+colorthresh = 15
 recursiondepth = 500
 im = []
 root = tk.Tk()
