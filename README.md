@@ -18,6 +18,8 @@ python main.py imgname.bmp show
 If the last argument is "show" then any debugging code to show the outputs of
 the images will be run. Otherwise, you will not see any images on the screen.
 
+TOREMEMBER:
+* the numpy array and the python imaging library indices for the image are FLIPPED! (e.g. in numpy if you want to look up pixel i,j you do (arr[i], arr[j]) but in PIL you do im.putpixel((arr[j], arr[i]), (255, 255, 255))
 
 TODO: 
 * Rename the current "wire" class into "Component" and then make subclasses later

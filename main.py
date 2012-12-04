@@ -89,7 +89,7 @@ else:
 	showstr = sys.argv[2]	
 
 	im = Image.open("imgs/"+ filename)
-	showImg(im, showstr)	
+	showImg(im, showstr)
 	
 	#doublecheck format, size, and mode
 	print im.format, im.size, im.mode 
