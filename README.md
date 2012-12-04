@@ -26,7 +26,11 @@ sudo apt-get install tk8.5-dev tcl8.5-dev python-tk
 
 TOREMEMBER:
 * the numpy array and the python imaging library indices for the image are FLIPPED! (e.g. in numpy if you want to look up pixel i,j you do (arr[i], arr[j]) but in PIL you do im.putpixel((arr[j], arr[i]), (255, 255, 255))
+* median filter is a fake segmentation implementation
 
 TODO: 
 * Rename the current "wire" class into "Component" and then make subclasses later
 * Think of a better way of deciding whether to add RGB values to the wire. I think the best way to approach this for now is to keep a "running average" of an RGB color and threshold off of that.
+* use RANSAC to make component inclusion/exclusion deciding easier
+* use sampling and color clustering to automatically decide on colors/thresholds (segmentation)
+* auto-align birdseye view
