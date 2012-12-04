@@ -8,7 +8,7 @@ from wire import Wire
 
 arr = []
 wires = [] #array of Wire objects
-colorthresh = 15
+colorthresh = 12
 recursiondepth = 500
 im = []
 root = tk.Tk()
@@ -28,32 +28,44 @@ def closeRGB(rgb1, rgb2):
 	return np.linalg.norm(rgb1 - rgb2)
 
 def makeWire(wire, firstpt):
-	temppts = set()
-	wire.addPixelLoc(makeWireHelper(firstpt, recursiondepth))
+	ptstocheck = set([firstpt])
+	checked = set()
+	wirepts = set([firstpt])
+	
+	while len(ptstocheck) > 0:
+		pt = ptstocheck.pop()
+		if pt not in checked:
+			ptsfromneighbor = checkNeighbors(pt, checked)
+			wirepts.update(ptsfromneighbor)
+			ptstocheck.update(ptsfromneighbor)
+			checked.add(pt)
+	wire.addPixelLoc(wirepts)
 
-def makeWireHelper(pt, recurdepth):
-	toreturn = set([pt])
-	temppts.add(pt)
-	if recurdepth > 0:
-		#check all pixels around the pt
-		#the index in positions is the "telephone keypad 
-		#positions" of each of the positions
-		positions = set()
-		positions.add((pt[0] - 1, pt[1] - 1))
-		positions.add((pt[0] - 1, pt[1]))
-		positions.add((pt[0] - 1, pt[1] + 1))
-		positions.add((pt[0], pt[1] - 1))
-		positions.add((pt[0], pt[1] + 1))
-		positions.add((pt[0] + 1, pt[1] - 1))
-		positions.add((pt[0] + 1, pt[1]))
-		positions.add((pt[0] + 1, pt[1] + 1))
-		for p in positions:
-			#print closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]])
-			if closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]]) < colorthresh:
-				if p not in temppts:
-					toreturn.add(p)
-					toreturn.update(makeWireHelper(p, recurdepth))
-	return toreturn	
+def checkNeighbors(pt, checkedpts):
+	toreturn = set()
+	positions = set()
+	
+	if pt[0] - 1 > 0:
+		positions.add((pt[0] - 1, pt[1])) #2
+		if pt[1] - 1 > 0:
+			positions.add((pt[0] - 1, pt[1] - 1)) #1
+		if pt[1] + 1 < arr.shape[1]: #y-value can't be greater than the number of cols
+			positions.add((pt[0] - 1, pt[1] + 1)) #3
+	if pt[1] - 1 > 0:
+		positions.add((pt[0], pt[1] - 1)) #4
+		if pt[0] + 1 < arr.shape[0]: #x-value can't be greater than number of rows
+			positions.add((pt[0] + 1, pt[1] - 1)) #7
+	if pt[1] + 1 < arr.shape[1]:
+		positions.add((pt[0], pt[1] + 1)) #6
+		if pt[0] + 1 < arr.shape[0]:
+			positions.add((pt[0] + 1, pt[1] + 1)) #9
+	if pt[0] + 1 < arr.shape[0]:
+		positions.add((pt[0] + 1, pt[1])) #8
+	for p in positions:
+		if closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]]) < colorthresh:
+			if p not in checkedpts:
+				toreturn.add(p)
+	return toreturn
 
 def seeWire(wire, frame):
 	for w in wire.getPixelLoc():
@@ -67,7 +79,6 @@ def callback(event):
 	wires.append(Wire())
 	#wires[-1].addPixelLoc([event.y, event.x])
 	makeWire(wires[-1], (event.y, event.x))
-	print wires[-1]
 	seeWire(wires[-1], event.widget)	
 	
 # write name of file in command-line arguments
