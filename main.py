@@ -6,8 +6,10 @@ import ImageTk
 import Tkinter as tk
 from wire import Wire
 
-arr = [];
-wire1 = Wire()
+arr = []
+wires = [] #array of Wire objects
+colorthresh = 10
+recursiondepth = 10
 
 def wait():
 	raw_input("Press enter to continue")
@@ -21,11 +23,39 @@ def showImg(image, show):
 def closeRGB(rgb1, rgb2):
 	return np.linalg.norm(rgb1 - rgb2)
 
+def makeWire(wire, firstpt):
+	wire.addPixelLoc(makeWireHelper(firstpt, recursiondepth))
+
+def makeWireHelper(pt, recurdepth):
+	toreturn = set([pt])
+	if recurdepth > 0:
+		#check all pixels around the pt
+		#the index in positions is the "telephone keypad 
+		#positions" of each of the positions
+		positions = set()
+		positions.add((pt[0] - 1, pt[1] - 1))
+		positions.add((pt[0] - 1, pt[1]))
+		positions.add((pt[0] - 1, pt[1] + 1))
+		positions.add((pt[0], pt[1] - 1))
+		positions.add((pt[0], pt[1] + 1))
+		positions.add((pt[0] + 1, pt[1] - 1))
+		positions.add((pt[0] + 1, pt[1]))
+		positions.add((pt[0] + 1, pt[1] + 1))
+		for p in positions:
+			#print closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]])
+			if closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]]) < colorthresh:
+				if p not in toreturn:
+					toreturn.add(p)
+					toreturn.update(makeWireHelper(p, recurdepth - 1))
+	return toreturn	
+
 def callback(event):
-	print "click at ", event.x, event.y
-	print arr[event.y, event.x]
-	wire1.addPixelLoc([event.y, event.x])
-	print wire1	
+	#print "click at ", event.x, event.y
+	#print arr[event.y, event.x]
+	wires.append(Wire())
+	#wires[-1].addPixelLoc([event.y, event.x])
+	makeWire(wires[-1], (event.y, event.x))
+	print wires[-1]	
 	
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):
@@ -49,7 +79,7 @@ else:
 	r = arr[:, :, 0]
 	g = arr[:, :, 1]
 	b = arr[:, :, 2]
-	print arr[0, 0] #each pixel
+	#print arr[0, 0] #each pixel
 
 	#tkinter to get user click from the screen
 	root = tk.Tk()

@@ -5,7 +5,7 @@ class Wire:
 		self.pixelLoc = []
 
 	def addPixelLoc(self, pixelloc):
-		self.pixelLoc.append(pixelloc)
+		self.pixelLoc.extend(pixelloc)
 
 	def __str__(self):
 		return self.pixelLoc.__str__()
