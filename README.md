@@ -21,4 +21,4 @@ the images will be run. Otherwise, you will not see any images on the screen.
 
 TODO: 
 * rename the current "wire" class into "Component" and then make subclasses later
-* make a "visualize component" function 
+* think about recursion depth and why it's being hit - there's a better way 
