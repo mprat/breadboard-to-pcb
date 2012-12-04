@@ -9,9 +9,11 @@ from wire import Wire
 arr = []
 wires = [] #array of Wire objects
 colorthresh = 10
-recursiondepth = 10
+recursiondepth = 500
 im = []
 root = tk.Tk()
+panel1 = []
+temppts = set()
 
 def wait():
 	raw_input("Press enter to continue")
@@ -26,10 +28,12 @@ def closeRGB(rgb1, rgb2):
 	return np.linalg.norm(rgb1 - rgb2)
 
 def makeWire(wire, firstpt):
+	temppts = set()
 	wire.addPixelLoc(makeWireHelper(firstpt, recursiondepth))
 
 def makeWireHelper(pt, recurdepth):
 	toreturn = set([pt])
+	temppts.add(pt)
 	if recurdepth > 0:
 		#check all pixels around the pt
 		#the index in positions is the "telephone keypad 
@@ -46,16 +50,16 @@ def makeWireHelper(pt, recurdepth):
 		for p in positions:
 			#print closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]])
 			if closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]]) < colorthresh:
-				if p not in toreturn:
+				if p not in temppts:
 					toreturn.add(p)
-					toreturn.update(makeWireHelper(p, recurdepth - 1))
+					toreturn.update(makeWireHelper(p, recurdepth))
 	return toreturn	
 
 def seeWire(wire, frame):
-	for w in wire.getPixelLoc:
-		im.putpixel(w, [255, 255, 255])
-	frameimage = ImageTk.PhotoImage(im)
-	frame.image = frameimage
+	for w in wire.getPixelLoc():
+		im.putpixel((w[1], w[0]), (255, 255, 255))
+	panel1.image = ImageTk.PhotoImage(im)
+	im.show()
 
 def callback(event):
 	#print "click at ", event.x, event.y
@@ -95,6 +99,6 @@ else:
 	panel1 = tk.Label(root, image=frameimage)
 	panel1.pack(side="top", fill="both", expand="yes")
 	panel1.bind("<Button-1>", callback)
-	panel1.image = frameimage	
+	#panel1.image = frameimage	
 
 	root.mainloop()	
