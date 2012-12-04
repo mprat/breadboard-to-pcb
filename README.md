@@ -20,5 +20,5 @@ the images will be run. Otherwise, you will not see any images on the screen.
 
 
 TODO: 
-* rename the current "wire" class into "Component" and then make subclasses later
-* think about recursion depth and why it's being hit - there's a better way 
+* Rename the current "wire" class into "Component" and then make subclasses later
+* Think of a better way of deciding whether to add RGB values to the wire. I think the best way to approach this for now is to keep a "running average" of an RGB color and threshold off of that.
