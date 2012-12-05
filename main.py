@@ -65,11 +65,12 @@ def checkNeighbors(pt, checkedpts, comp):
 				toreturn.add(p)
 	return toreturn
 
-def seeComponent(comp, frame):
+def seeComponent(comp):
+	newim = im.copy()
 	for c in comp.getPixelLoc():
-		im.putpixel((c[0][1], c[0][0]), (255, 255, 255))
-	panel1.image = ImageTk.PhotoImage(im)
-	im.show()
+		newim.putpixel((c[0][1], c[0][0]), (255, 255, 255))
+	panel1.image = ImageTk.PhotoImage(newim)
+	newim.show()
 
 def callback(event):
 	#print "click at ", event.x, event.y
@@ -77,7 +78,7 @@ def callback(event):
 	components.append(Component())
 	#wires[-1].addPixelLoc([event.y, event.x])
 	makeComponent(components[-1], (event.y, event.x))
-	seeComponent(components[-1], event.widget)	
+	seeComponent(components[-1])	
 	
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):
