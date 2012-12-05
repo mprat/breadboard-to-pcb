@@ -66,7 +66,7 @@ def seeComponent(comp):
 def callback(event):
 	print "click at ", event.x, event.y, " . Please wait."
 	#print arr[event.y, event.x]
-	components.append(Component())
+	components.append(Component(arr.shape[0], arr.shape[1]))
 	#wires[-1].addPixelLoc([event.y, event.x])
 	makeComponent(components[-1], (event.y, event.x))
 	seeComponent(components[-1])	
