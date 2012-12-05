@@ -4,7 +4,7 @@ class Component:
 	def __init__(self, imgheight, imgwidth):
 		self.pixelLoc = []
 		self.RGBcolors = []
-		self.boundarypixels = []
+		self.boundarypixels = set([])
 		self.img_width = imgwidth
 		self.img_height = imgheight
 
@@ -12,20 +12,42 @@ class Component:
 		self.pixelLoc.append(pixelloc)
 		self.RGBcolors.append(rgbcolor)
 		if (len(self.boundarypixels) < 1):
-			self.boundarypixels.append(pixelloc)
+			self.boundarypixels.add(pixelloc)
 		else:
-			neighbors = self.getValidNeighbors(pixelloc[0])
-			count_n = 0
-			for n in neighbors:
-				if n not in self.pixelloc:
-					count_n += 1
-			print "count_n = ", count_n
+			self.updateNeighbors(pixelloc)
 
+	def updateNeighbors(self, newpixelloc):
+		neighborstoupdate = [newpixelloc]
+
+		while (len(neighborstoupdate) > 0):
+			neighbortoupdate = neighborstoupdate.pop()
+			if self.isBoundary(neighbortoupdate):
+				self.boundarypixels.add(neighbortoupdate)
+				for n in self.neighborsInComp(neighbortoupdate):
+					if not self.isBoundary(n) and n in self.boundarypixels:
+						self.boundarypixels.remove(n)
+						neighborstoupdate.extend(self.neighborsInComp(n))
+
+	def isBoundary(self, pixelloc):
+		#neighbors = self.getValidNeighbors(pixelloc)
+		#if sum([n not in self.pixelloc for n in neighbors]) >= 3:
+		#	return True
+		if 8 - len(self.neighborsInComp(pixelloc)) >= 3:
+			self.boundarypixels.add(pixelloc)
+			return True
+	
+	def neighborsInComp(self, pixelloc):
+		#use set intersection for faster performance
+		return [i for i in self.getValidNeighbors(pixelloc) if i in self.pixelLoc]
+	
 	def __str__(self):
 		return self.pixelLoc.__str__()
 
 	def getPixelLoc(self):
 		return self.pixelLoc
+
+	def getBoundary(self):
+		return self.boundarypixels
 
 	def getRGBavg(self):
 		#axis=0 means the rgb-triple is the thing being averaged

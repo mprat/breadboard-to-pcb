@@ -28,7 +28,7 @@ def makeComponent(comp, firstpt):
 	checked = set()
 
 	#need to seed the wire with the first color
-	comp.addPixelLoc([firstpt], getColor(firstpt))	
+	comp.addPixelLoc(firstpt, getColor(firstpt))	
 
 	loopcounter = 0
 	while len(ptstocheck) > 0:
@@ -51,7 +51,7 @@ def checkNeighbors(pt, checkedpts, comp):
 	positions = comp.getValidNeighbors(pt)
 	for p in positions:
 		if comp.closeRGB(getColor(p)) < colorthresh:
-			comp.addPixelLoc([p], getColor(p))
+			comp.addPixelLoc(p, getColor(p))
 			if p not in checkedpts:
 				toreturn.add(p)
 	return toreturn
@@ -59,7 +59,14 @@ def checkNeighbors(pt, checkedpts, comp):
 def seeComponent(comp):
 	newim = im.copy()
 	for c in comp.getPixelLoc():
-		newim.putpixel((c[0][1], c[0][0]), (255, 255, 255))
+		newim.putpixel((c[1], c[0]), (255, 255, 255))
+	panel1.image = ImageTk.PhotoImage(newim)
+	newim.show()
+
+def seeBoundary(comp):
+	newim = im.copy()
+	for c in comp.getBoundary():
+		newim.putpixel((c[1], c[0]), (255, 0, 0))
 	panel1.image = ImageTk.PhotoImage(newim)
 	newim.show()
 
@@ -70,6 +77,7 @@ def callback(event):
 	#wires[-1].addPixelLoc([event.y, event.x])
 	makeComponent(components[-1], (event.y, event.x))
 	seeComponent(components[-1])	
+	seeBoundary(components[-1])
 	print "End click. Ready to process another"
 	
 # write name of file in command-line arguments
