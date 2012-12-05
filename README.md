@@ -33,3 +33,4 @@ TODO:
 * auto-align birdseye view
 * option to change between using running-average distance or "change the average in a significant way" (RANSAC)
 * differentiate between components
+* where the user clicks, generate a few "component models" and ask the user to choose the best one?

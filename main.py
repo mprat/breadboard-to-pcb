@@ -8,11 +8,10 @@ from component import Component
 
 arr = []
 components = [] #array of component objects
-colorthresh = 30
+colorthresh = 25
 im = []
 root = tk.Tk()
 panel1 = []
-temppts = set()
 
 def wait():
 	raw_input("Press enter to continue")
@@ -31,33 +30,44 @@ def makeComponent(comp, firstpt):
 	#need to seed the wire with the first color
 	comp.addPixelLoc([firstpt], getColor(firstpt))	
 
+	loopcounter = 0
+
 	while len(ptstocheck) > 0:
+		loopcounter += 1
 		pt = ptstocheck.pop()
 		if pt not in checked:
+			checked.add(pt)
 			ptsfromneighbor = checkNeighbors(pt, checked, comp)
 			ptstocheck.update(ptsfromneighbor)
-			checked.add(pt)
+		if loopcounter > 1000:
+			print "Probably detecting a component incorrectly!"
+			break
 
 def checkNeighbors(pt, checkedpts, comp):
 	toreturn = set()
 	positions = set()
 	
-	if pt[0] - 1 > 0:
+	# add the next points to check onto the queue in a smart way
+	# wires are more likely to go up-down or side-side, so check 
+	# positions 2, 6, 8, and 4 last (so that they get popped first)
+	
+	if (pt[0] - 1 > 0) and (pt[1] - 1 > 0):
+		positions.add((pt[0] - 1, pt[1] - 1)) #1
+	if (pt[1] + 1 < arr.shape[1]) and (pt[0] + 1 < arr.shape[0]): #x-value can't be greater than the number of rows
+		positions.add((pt[0] + 1, pt[1] + 1)) #9
+	if (pt[0] - 1 > 0) and (pt[1] + 1 < arr.shape[1]): #y-value can't be greater than the number of cols
+		positions.add((pt[0] - 1, pt[1] + 1)) #3
+	if (pt[1] - 1 > 0) and (pt[0] + 1 < arr.shape[0]):
+		positions.add((pt[0] + 1, pt[1] - 1)) #7
+	if (pt[0] - 1 > 0):
 		positions.add((pt[0] - 1, pt[1])) #2
-		if pt[1] - 1 > 0:
-			positions.add((pt[0] - 1, pt[1] - 1)) #1
-		if pt[1] + 1 < arr.shape[1]: #y-value can't be greater than the number of cols
-			positions.add((pt[0] - 1, pt[1] + 1)) #3
 	if pt[1] - 1 > 0:
 		positions.add((pt[0], pt[1] - 1)) #4
-		if pt[0] + 1 < arr.shape[0]: #x-value can't be greater than number of rows
-			positions.add((pt[0] + 1, pt[1] - 1)) #7
 	if pt[1] + 1 < arr.shape[1]:
 		positions.add((pt[0], pt[1] + 1)) #6
-		if pt[0] + 1 < arr.shape[0]:
-			positions.add((pt[0] + 1, pt[1] + 1)) #9
 	if pt[0] + 1 < arr.shape[0]:
 		positions.add((pt[0] + 1, pt[1])) #8
+
 	for p in positions:
 		if comp.closeRGB(getColor(p)) < colorthresh:
 			comp.addPixelLoc([p], getColor(p))
@@ -73,12 +83,13 @@ def seeComponent(comp):
 	newim.show()
 
 def callback(event):
-	#print "click at ", event.x, event.y
+	print "click at ", event.x, event.y, " . Please wait."
 	#print arr[event.y, event.x]
 	components.append(Component())
 	#wires[-1].addPixelLoc([event.y, event.x])
 	makeComponent(components[-1], (event.y, event.x))
 	seeComponent(components[-1])	
+	print "End click. Ready to process another"
 	
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):
