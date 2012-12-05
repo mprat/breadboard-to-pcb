@@ -9,7 +9,6 @@ from wire import Wire
 arr = []
 wires = [] #array of Wire objects
 colorthresh = 12
-recursiondepth = 500
 im = []
 root = tk.Tk()
 panel1 = []
@@ -35,13 +34,13 @@ def makeWire(wire, firstpt):
 	while len(ptstocheck) > 0:
 		pt = ptstocheck.pop()
 		if pt not in checked:
-			ptsfromneighbor = checkNeighbors(pt, checked)
-			wirepts.update(ptsfromneighbor)
+			ptsfromneighbor = checkNeighbors(pt, checked, wire)
+			#wirepts.update(ptsfromneighbor)
 			ptstocheck.update(ptsfromneighbor)
 			checked.add(pt)
-	wire.addPixelLoc(wirepts)
+	#wire.addPixelLoc(wirepts)
 
-def checkNeighbors(pt, checkedpts):
+def checkNeighbors(pt, checkedpts, wire):
 	toreturn = set()
 	positions = set()
 	
@@ -63,6 +62,7 @@ def checkNeighbors(pt, checkedpts):
 		positions.add((pt[0] + 1, pt[1])) #8
 	for p in positions:
 		if closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]]) < colorthresh:
+			wire.addPixelLoc([p])
 			if p not in checkedpts:
 				toreturn.add(p)
 	return toreturn
