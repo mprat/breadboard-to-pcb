@@ -29,8 +29,8 @@ TOREMEMBER:
 * median filter is a fake segmentation implementation
 
 TODO: 
-* Rename the current "wire" class into "Component" and then make subclasses later
 * use RANSAC to make component inclusion/exclusion deciding easier
 * use sampling and color clustering to automatically decide on colors/thresholds (segmentation)
 * auto-align birdseye view
 * option to change between using running-average distance or "change the average in a significant way"
+* differentiate between components
