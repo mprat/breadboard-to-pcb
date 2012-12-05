@@ -47,29 +47,8 @@ def check_breaks():
 
 def checkNeighbors(pt, checkedpts, comp):
 	toreturn = set()
-	positions = set()
-	
-	# add the next points to check onto the queue in a smart way
-	# wires are more likely to go up-down or side-side, so check 
-	# positions 2, 6, 8, and 4 last (so that they get popped first)
-	
-	if (pt[0] - 1 > 0) and (pt[1] - 1 > 0):
-		positions.add((pt[0] - 1, pt[1] - 1)) #1
-	if (pt[1] + 1 < arr.shape[1]) and (pt[0] + 1 < arr.shape[0]): #x-value can't be greater than the number of rows
-		positions.add((pt[0] + 1, pt[1] + 1)) #9
-	if (pt[0] - 1 > 0) and (pt[1] + 1 < arr.shape[1]): #y-value can't be greater than the number of cols
-		positions.add((pt[0] - 1, pt[1] + 1)) #3
-	if (pt[1] - 1 > 0) and (pt[0] + 1 < arr.shape[0]):
-		positions.add((pt[0] + 1, pt[1] - 1)) #7
-	if (pt[0] - 1 > 0):
-		positions.add((pt[0] - 1, pt[1])) #2
-	if pt[1] - 1 > 0:
-		positions.add((pt[0], pt[1] - 1)) #4
-	if pt[1] + 1 < arr.shape[1]:
-		positions.add((pt[0], pt[1] + 1)) #6
-	if pt[0] + 1 < arr.shape[0]:
-		positions.add((pt[0] + 1, pt[1])) #8
-
+#	positions = getValidNeighbors(pt)
+	positions = comp.getValidNeighbors(pt, arr.shape[0], arr.shape[1])
 	for p in positions:
 		if comp.closeRGB(getColor(p)) < colorthresh:
 			comp.addPixelLoc([p], getColor(p))
