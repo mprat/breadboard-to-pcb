@@ -30,7 +30,7 @@ TOREMEMBER:
 
 TODO: 
 * Rename the current "wire" class into "Component" and then make subclasses later
-* Think of a better way of deciding whether to add RGB values to the wire. I think the best way to approach this for now is to keep a "running average" of an RGB color and threshold off of that.
 * use RANSAC to make component inclusion/exclusion deciding easier
 * use sampling and color clustering to automatically decide on colors/thresholds (segmentation)
 * auto-align birdseye view
+* option to change between using running-average distance or "change the average in a significant way"
