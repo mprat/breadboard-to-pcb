@@ -48,7 +48,7 @@ def check_breaks():
 def checkNeighbors(pt, checkedpts, comp):
 	toreturn = set()
 #	positions = getValidNeighbors(pt)
-	positions = comp.getValidNeighbors(pt, arr.shape[0], arr.shape[1])
+	positions = comp.getValidNeighbors(pt)
 	for p in positions:
 		if comp.closeRGB(getColor(p)) < colorthresh:
 			comp.addPixelLoc([p], getColor(p))
