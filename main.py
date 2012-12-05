@@ -8,7 +8,7 @@ from wire import Wire
 
 arr = []
 wires = [] #array of Wire objects
-colorthresh = 12
+colorthresh = 30
 im = []
 root = tk.Tk()
 panel1 = []
@@ -21,18 +21,12 @@ def showImg(image, show):
 	if (show == "show"):
 		image.show()
 
-#metric of how close two rgb values are 
-# (just use euclidean distance for now)
-def closeRGB(rgb1, rgb2):
-	return np.linalg.norm(rgb1 - rgb2)
-
 def getColor(pt):
 	return arr[pt[0], pt[1]]
 
 def makeWire(wire, firstpt):
 	ptstocheck = set([firstpt])
 	checked = set()
-	wirepts = set([firstpt])
 
 	#need to seed the wire with the first color
 	wire.addPixelLoc([firstpt], getColor(firstpt))	
@@ -41,10 +35,8 @@ def makeWire(wire, firstpt):
 		pt = ptstocheck.pop()
 		if pt not in checked:
 			ptsfromneighbor = checkNeighbors(pt, checked, wire)
-			#wirepts.update(ptsfromneighbor)
 			ptstocheck.update(ptsfromneighbor)
 			checked.add(pt)
-	#wire.addPixelLoc(wirepts)
 
 def checkNeighbors(pt, checkedpts, wire):
 	toreturn = set()
@@ -67,7 +59,7 @@ def checkNeighbors(pt, checkedpts, wire):
 	if pt[0] + 1 < arr.shape[0]:
 		positions.add((pt[0] + 1, pt[1])) #8
 	for p in positions:
-		if closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]]) < colorthresh:
+		if wire.closeRGB(getColor(p)) < colorthresh:
 			wire.addPixelLoc([p], getColor(p))
 			if p not in checkedpts:
 				toreturn.add(p)
@@ -75,7 +67,7 @@ def checkNeighbors(pt, checkedpts, wire):
 
 def seeWire(wire, frame):
 	for w in wire.getPixelLoc():
-		im.putpixel((w[1], w[0]), (255, 255, 255))
+		im.putpixel((w[0][1], w[0][0]), (255, 255, 255))
 	panel1.image = ImageTk.PhotoImage(im)
 	im.show()
 

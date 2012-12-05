@@ -6,8 +6,8 @@ class Wire:
 		self.RGBcolors = []
 
 	def addPixelLoc(self, pixelloc, rgbcolor):
-		self.pixelLoc.extend(pixelloc)
-		self.RGBcolors.extend(rgbcolor)
+		self.pixelLoc.append(pixelloc)
+		self.RGBcolors.append(rgbcolor)
 
 	def __str__(self):
 		return self.pixelLoc.__str__()
@@ -22,3 +22,6 @@ class Wire:
 			sys.exit(1)
 		else:
 			return np.average(self.RGBcolors, axis=0)
+
+	def closeRGB(self, rgb):
+		return np.linalg.norm(self.getRGBavg() - rgb)
