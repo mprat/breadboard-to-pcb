@@ -23,5 +23,8 @@ class Component:
 		else:
 			return np.average(self.RGBcolors, axis=0)
 
+	def getRGBavgastuple(self):
+		return tuple(map(int, self.getRGBavg()))
+
 	def closeRGB(self, rgb):
 		return np.linalg.norm(self.getRGBavg() - rgb)

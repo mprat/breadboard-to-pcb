@@ -1,10 +1,10 @@
 import Image
 import sys
-import ImageFilter
 import numpy as np
 import ImageTk
 import Tkinter as tk
 from component import Component
+import segmentation as seg
 
 arr = []
 components = [] #array of component objects
@@ -31,7 +31,6 @@ def makeComponent(comp, firstpt):
 	comp.addPixelLoc([firstpt], getColor(firstpt))	
 
 	loopcounter = 0
-
 	while len(ptstocheck) > 0:
 		loopcounter += 1
 		pt = ptstocheck.pop()
@@ -101,13 +100,11 @@ else:
 	im = Image.open("imgs/"+ filename)
 	showImg(im, showstr)
 	
+	imsegmode = seg.modeSegment(im)
+	showImg(imsegmode, showstr)
+
 	#doublecheck format, size, and mode
 	print im.format, im.size, im.mode 
-	
-	#can get an image without the holes in the breadboard from a modefilter
-	#the number is hard-coded and made up for now
-	immodefilter = im.filter(ImageFilter.ModeFilter(10))
-	showImg(immodefilter, showstr)
 	
 	arr = np.array(im)
 	r = arr[:, :, 0]
