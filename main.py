@@ -4,10 +4,10 @@ import ImageFilter
 import numpy as np
 import ImageTk
 import Tkinter as tk
-from wire import Wire
+from component import Component
 
 arr = []
-wires = [] #array of Wire objects
+components = [] #array of component objects
 colorthresh = 30
 im = []
 root = tk.Tk()
@@ -24,21 +24,21 @@ def showImg(image, show):
 def getColor(pt):
 	return arr[pt[0], pt[1]]
 
-def makeWire(wire, firstpt):
+def makeComponent(comp, firstpt):
 	ptstocheck = set([firstpt])
 	checked = set()
 
 	#need to seed the wire with the first color
-	wire.addPixelLoc([firstpt], getColor(firstpt))	
+	comp.addPixelLoc([firstpt], getColor(firstpt))	
 
 	while len(ptstocheck) > 0:
 		pt = ptstocheck.pop()
 		if pt not in checked:
-			ptsfromneighbor = checkNeighbors(pt, checked, wire)
+			ptsfromneighbor = checkNeighbors(pt, checked, comp)
 			ptstocheck.update(ptsfromneighbor)
 			checked.add(pt)
 
-def checkNeighbors(pt, checkedpts, wire):
+def checkNeighbors(pt, checkedpts, comp):
 	toreturn = set()
 	positions = set()
 	
@@ -59,25 +59,25 @@ def checkNeighbors(pt, checkedpts, wire):
 	if pt[0] + 1 < arr.shape[0]:
 		positions.add((pt[0] + 1, pt[1])) #8
 	for p in positions:
-		if wire.closeRGB(getColor(p)) < colorthresh:
-			wire.addPixelLoc([p], getColor(p))
+		if comp.closeRGB(getColor(p)) < colorthresh:
+			comp.addPixelLoc([p], getColor(p))
 			if p not in checkedpts:
 				toreturn.add(p)
 	return toreturn
 
-def seeWire(wire, frame):
-	for w in wire.getPixelLoc():
-		im.putpixel((w[0][1], w[0][0]), (255, 255, 255))
+def seeComponent(comp, frame):
+	for c in comp.getPixelLoc():
+		im.putpixel((c[0][1], c[0][0]), (255, 255, 255))
 	panel1.image = ImageTk.PhotoImage(im)
 	im.show()
 
 def callback(event):
 	#print "click at ", event.x, event.y
 	#print arr[event.y, event.x]
-	wires.append(Wire())
+	components.append(Component())
 	#wires[-1].addPixelLoc([event.y, event.x])
-	makeWire(wires[-1], (event.y, event.x))
-	seeWire(wires[-1], event.widget)	
+	makeComponent(components[-1], (event.y, event.x))
+	seeComponent(components[-1], event.widget)	
 	
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):

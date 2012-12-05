@@ -1,6 +1,6 @@
 import numpy as np
 
-class Wire:
+class Component:
 	def __init__(self):
 		self.pixelLoc = []
 		self.RGBcolors = []
