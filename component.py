@@ -15,6 +15,11 @@ class Component:
 			self.boundarypixels.append(pixelloc)
 		else:
 			neighbors = self.getValidNeighbors(pixelloc[0])
+			count_n = 0
+			for n in neighbors:
+				if n not in self.pixelloc:
+					count_n += 1
+			print "count_n = ", count_n
 
 	def __str__(self):
 		return self.pixelLoc.__str__()
