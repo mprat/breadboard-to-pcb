@@ -26,11 +26,17 @@ def showImg(image, show):
 def closeRGB(rgb1, rgb2):
 	return np.linalg.norm(rgb1 - rgb2)
 
+def getColor(pt):
+	return arr[pt[0], pt[1]]
+
 def makeWire(wire, firstpt):
 	ptstocheck = set([firstpt])
 	checked = set()
 	wirepts = set([firstpt])
-	
+
+	#need to seed the wire with the first color
+	wire.addPixelLoc([firstpt], getColor(firstpt))	
+
 	while len(ptstocheck) > 0:
 		pt = ptstocheck.pop()
 		if pt not in checked:
@@ -62,7 +68,7 @@ def checkNeighbors(pt, checkedpts, wire):
 		positions.add((pt[0] + 1, pt[1])) #8
 	for p in positions:
 		if closeRGB(arr[pt[0], pt[1]], arr[p[0], p[1]]) < colorthresh:
-			wire.addPixelLoc([p])
+			wire.addPixelLoc([p], getColor(p))
 			if p not in checkedpts:
 				toreturn.add(p)
 	return toreturn

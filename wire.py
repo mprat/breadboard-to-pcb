@@ -5,7 +5,7 @@ class Wire:
 		self.pixelLoc = []
 		self.RGBcolors = []
 
-	def addPixelLoc(self, pixelloc, rgbcolor=[255, 255, 255]):
+	def addPixelLoc(self, pixelloc, rgbcolor):
 		self.pixelLoc.extend(pixelloc)
 		self.RGBcolors.extend(rgbcolor)
 
@@ -17,4 +17,8 @@ class Wire:
 
 	def getRGBavg(self):
 		#axis=0 means the rgb-triple is the thing being averaged
-		return np.average(self.RGBcolors, axis=0)
+		if (len(self.RGBcolors) < 1):
+			print "Error. Should never get here"
+			sys.exit(1)
+		else:
+			return np.average(self.RGBcolors, axis=0)
