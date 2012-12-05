@@ -4,10 +4,13 @@ class Component:
 	def __init__(self):
 		self.pixelLoc = []
 		self.RGBcolors = []
+		self.boundarypixels = []
 
 	def addPixelLoc(self, pixelloc, rgbcolor):
 		self.pixelLoc.append(pixelloc)
 		self.RGBcolors.append(rgbcolor)
+		if (len(self.pixelLoc) < 1):
+			self.boundarypixels.append(pixelloc)
 
 	def __str__(self):
 		return self.pixelLoc.__str__()
@@ -28,3 +31,6 @@ class Component:
 
 	def closeRGB(self, rgb):
 		return np.linalg.norm(self.getRGBavg() - rgb)
+
+	def getBoundary(self):
+		return self.boundarypixels

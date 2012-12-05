@@ -42,6 +42,9 @@ def makeComponent(comp, firstpt):
 			print "Probably detecting a component incorrectly!"
 			break
 
+def check_breaks():
+	return False
+
 def checkNeighbors(pt, checkedpts, comp):
 	toreturn = set()
 	positions = set()
