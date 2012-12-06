@@ -60,11 +60,6 @@ def seeComponent(comp):
 	newim = im.copy()
 	for c in comp.getPixelLoc():
 		newim.putpixel((c[1], c[0]), (255, 255, 255))
-	panel1.image = ImageTk.PhotoImage(newim)
-	newim.show()
-
-def seeBoundary(comp):
-	newim = im.copy()
 	for c in comp.getBoundary():
 		newim.putpixel((c[1], c[0]), (255, 0, 0))
 	panel1.image = ImageTk.PhotoImage(newim)
@@ -77,7 +72,6 @@ def callback(event):
 	#wires[-1].addPixelLoc([event.y, event.x])
 	makeComponent(components[-1], (event.y, event.x))
 	seeComponent(components[-1])	
-	seeBoundary(components[-1])
 	print "End click. Ready to process another"
 	
 # write name of file in command-line arguments

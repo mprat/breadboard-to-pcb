@@ -27,6 +27,9 @@ class Component:
 					if not self.isBoundary(n) and n in self.boundarypixels:
 						self.boundarypixels.remove(n)
 						neighborstoupdate.extend(self.neighborsInComp(n))
+	
+	def getEnds(self):
+		return False
 
 	def isBoundary(self, pixelloc):
 		#neighbors = self.getValidNeighbors(pixelloc)
