@@ -6,6 +6,7 @@ import Tkinter as tk
 from component import Component
 import segmentation as seg
 
+################### GLOBAL VARS #################
 arr = []
 components = [] #array of component objects
 colorthresh = 25
@@ -13,12 +14,22 @@ im = []
 root = tk.Tk()
 panel1 = []
 
+
+################# UTILITY METHODS ##################
+
 def wait():
 	raw_input("Press enter to continue")
 
 def showImg(image, show):
 	if (show == "show"):
-		image.show()
+		im = ImageTk.PhotoImage(image)
+		local = tk.Toplevel(master=root)
+		panel1 = tk.Label(local, image=im)
+		panel1.image = im
+		panel1.pack(side="top", fill="both", expand="yes")
+
+
+################# CATHERIO HAS NO IDEA WHAT THESE DO ##################
 
 def getColor(pt):
 	return arr[pt[0], pt[1]]
@@ -65,7 +76,7 @@ def seeComponent(comp):
 	panel1.image = ImageTk.PhotoImage(newim)
 	newim.show()
 
-def callback(event):
+def makeComponentCallback(event):
 	print "click at ", event.x, event.y, " . Please wait."
 	#print arr[event.y, event.x]
 	components.append(Component(arr.shape[0], arr.shape[1]))
@@ -73,14 +84,17 @@ def callback(event):
 	makeComponent(components[-1], (event.y, event.x))
 	seeComponent(components[-1])	
 	print "End click. Ready to process another"
-	
+
+def showClickCallback(event):
+	print "click at", event.x, event.y, ". Doing nothing about it."
+
+################ MAIN EVENT LOOP ####################
 # write name of file in command-line arguments
 if (len(sys.argv) != 3):
 	sys.exit(0)
 else:
 	filename = sys.argv[1]
 	showstr = sys.argv[2]	
-
 	im = Image.open("imgs/"+ filename)
 	showImg(im, showstr)
 	
@@ -100,7 +114,6 @@ else:
 	frameimage = ImageTk.PhotoImage(im)
 	panel1 = tk.Label(root, image=frameimage)
 	panel1.pack(side="top", fill="both", expand="yes")
-	panel1.bind("<Button-1>", callback)
-	#panel1.image = frameimage	
+	panel1.bind("<Button-1>", showClickCallback)
 
 	root.mainloop()	
