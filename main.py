@@ -30,6 +30,22 @@ def showImg(image):
         panel.image = im
         panel.pack(side="top", fill="both", expand="yes")
 
+def downsample(imArray, byFactor):
+    return imArray[range(0, imArray.shape[0], byFactor)][:, range(0, imArray.shape[1], byFactor)]
+
+def closest(x, options):
+    try:
+        (val, option) = min((np.linalg.norm(x - m),m) for m in options)
+        return option
+    except ValueError: # this happens if two of them have identical norm...
+        print "Two colors equally good, doing something halfway reasonable about it"
+        return options[0] # TOTAL HACK, just pick the first one
+
+def curry_f(f, second):
+    def f_curried(first):
+        print first
+        return f(first, second)
+    return f_curried
 
 ################# COMPONENT-FINDING METHODS ##################
 
@@ -91,10 +107,18 @@ def makeComponentCallback(event):
     print "End click. Ready to process another"
 
 def showClickCallback(event):
-    print "click at", event.x, event.y, ". Doing nothing about it."
+    print "Click at", event.x, event.y, " with color ", arr[event.y, event.x]
 
 
 ################ MAIN EVENT LOOP ####################
+
+def loadIm(filename):
+    global im
+    im = Image.open("imgs/"+ filename)
+    global arr
+    arr = np.array(im) #r = arr[:, :, 0] etc.
+    print im.format, im.size, im.mode 
+    showImg(im)
 
 def main():
     """Main loop.
@@ -115,19 +139,14 @@ def main():
 	print "Incorrect command line arguments. For help use --help"
 	sys.exit(0)
     else:
-        # Set configuration
+        # Set up configuration
         showstr = sys.argv[2]
         global show
        	show = (showstr == 'show')
 
         # Load the image
         filename = sys.argv[1]
-        global im
-        im = Image.open("imgs/"+ filename) # global
-        global arr
-        arr = np.array(im) # global; r = arr[:, :, 0] etc.
-        showImg(im)
-        print im.format, im.size, im.mode 
+        loadIm(filename)
         
         # Set up main panel with appropriate callback
         frameimage = ImageTk.PhotoImage(im)
@@ -135,9 +154,9 @@ def main():
         panel1.pack(side="top", fill="both", expand="yes")
         panel1.bind("<Button-1>", showClickCallback)
 
-        # Do modesegmentation, show
-        imsegmode = seg.modeSegment(im)
-        showImg(imsegmode)
+        # Do mode filtering, show
+        # immode = seg.modeFilter(im, 10)
+        # showImg(immode)
         
         root.mainloop()
 
