@@ -31,6 +31,9 @@ class Component:
 	def getEnds(self):
 		return False
 
+	def breakBoundary(self):
+		return False
+
 	def isBoundary(self, pixelloc):
 		#neighbors = self.getValidNeighbors(pixelloc)
 		#if sum([n not in self.pixelloc for n in neighbors]) >= 3:
