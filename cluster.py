@@ -1,7 +1,7 @@
 import random
 import math
 from numpy import *
-from plotGauss2D import *
+#from plotGauss2D import *
 
 #############################
 # MOG class
@@ -12,8 +12,8 @@ class MOG:
         self.pi = pi
         self.mu = mu
         self.var = var
-    def plot(self, color = 'black'):
-        return plotGauss2D(self.mu, self.var, color=color)
+#    def plot(self, color = 'black'):
+#        return plotGauss2D(self.mu, self.var, color=color)
     def __str__(self):
         return "[pi=%.2f,mu=%s, var=%s]"%(self.pi, self.mu.tolist(), self.var.tolist())
     __repr__ = __str__

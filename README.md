@@ -22,7 +22,8 @@ INSTALLNOTES:
 * to get Tkinter to work in python, run
 sudo apt-get install tk8.5-dev tcl8.5-dev python-tk
 * download PIL and run python setup.py install in the directory after you uncompress it
-* it should work
+* need to do sudo apt-get install python-matplotlib to get matplotlib to work
+* install Lapack - sudo apt-get install liblapack-dev
 
 TOREMEMBER:
 * the numpy array and the python imaging library indices for the image are FLIPPED! (e.g. in numpy if you want to look up pixel i,j you do (arr[i], arr[j]) but in PIL you do im.putpixel((arr[j], arr[i]), (255, 255, 255))

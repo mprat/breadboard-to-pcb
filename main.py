@@ -22,12 +22,12 @@ panel1 = []
 def wait():
     raw_input("Press enter to continue")
 
-def showImg(image):
+def showImg(img):
     if show:
-        im = ImageTk.PhotoImage(image)
+        im2 = ImageTk.PhotoImage(img, master=root)
         local = tk.Toplevel(master=root)
-        panel = tk.Label(local, image=im)
-        panel.image = im
+        panel = tk.Label(local, image=im2)
+        panel.image = im2
         panel.pack(side="top", fill="both", expand="yes")
 
 def downsample(imArray, byFactor):
@@ -91,7 +91,7 @@ def seeComponent(comp):
         newim.putpixel((c[1], c[0]), (255, 255, 255))
     for c in comp.getBoundary():
         newim.putpixel((c[1], c[0]), (255, 0, 0))
-    panel1.image = ImageTk.PhotoImage(newim)
+    #panel1.image = ImageTk.PhotoImage(newim)
     showImg(newim)
 
 
@@ -118,7 +118,6 @@ def loadIm(filename):
     global arr
     arr = np.array(im) #r = arr[:, :, 0] etc.
     print im.format, im.size, im.mode 
-    showImg(im)
 
 def main():
     """Main loop.
@@ -149,10 +148,11 @@ def main():
         loadIm(filename)
         
         # Set up main panel with appropriate callback
-        frameimage = ImageTk.PhotoImage(im)
+        frameimage = ImageTk.PhotoImage(im, master=root)
+        global panel1
         panel1 = tk.Label(root, image=frameimage)
         panel1.pack(side="top", fill="both", expand="yes")
-        panel1.bind("<Button-1>", showClickCallback)
+        panel1.bind("<Button-1>", makeComponentCallback)
 
         # Do mode filtering, show
         # immode = seg.modeFilter(im, 10)
