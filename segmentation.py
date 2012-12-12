@@ -30,9 +30,15 @@ def paletteTransformIm(im, palette):
 def connectedComponents(arr, palette):
     components = np.zeros(arr.shape[0:2])
     numcomponents = 0
-    for color in palette[0:2]:
+    for (i, color) in enumerate(palette):
         onecolor = m.pixelwiseArr(arr, lambda pix: (pix == color).all())[:,:,0] # all dimensions identical
-        (labels, numlabels) = ndimage.measurements.label(onecolor)    
+
+        # remove specks
+        eroded = ndimage.binary_erosion(onecolor)
+        reconstructed = ndimage.binary_propagation(eroded, mask=onecolor)
+        
+        # find connected components
+        (labels, numlabels) = ndimage.measurements.label(reconstructed)
         components = labels + m.pixelwiseArr(components, lambda x : 0 if x==0 else x+numlabels)
         numcomponents += numlabels
     return (components, numcomponents)
