@@ -3,6 +3,10 @@ import ImageFilter
 import cluster
 import numpy as np
 import main as m
+### import skimage # may be useful later
+from scipy import ndimage
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 def modeFilter(im, thresh):
     immodefilter = im.filter(ImageFilter.ModeFilter(thresh))
@@ -20,21 +24,28 @@ def kMeansColorSpace(arr, initColors):
     X = arr.reshape(1, -1, 3).squeeze() 
     return cluster.kMeans(X, initColors)    
 
-def paletteTransform(im, palette):
-    return m.pixelwise(im, lambda pix: tuple(m.closest(pix, palette)))
+def paletteTransformIm(im, palette):
+    return m.pixelwiseIm(im, lambda pix: tuple(m.closest(pix, palette)))
 
-def connectedComponents(im, palette):
-    # This does not work yet; it is just a stand-in
-    def binaryTransform(px, color):
-        if (px == palette[0]).all():
-            return 1
-        else:
-            return 0
-    return m.pixelwise(im, lambda x: binaryTransform(x, palette[0]), mode='1')
+def connectedComponents(arr, palette):
+    components = np.zeros(arr.shape[0:2])
+    numcomponents = 0
+    for color in palette[0:2]:
+        onecolor = m.pixelwiseArr(arr, lambda pix: (pix == color).all())[:,:,0] # all dimensions identical
+        (labels, numlabels) = ndimage.measurements.label(onecolor)    
+        components = labels + m.pixelwiseArr(components, lambda x : 0 if x==0 else x+numlabels)
+        numcomponents += numlabels
+    return (components, numcomponents)
 
-
-# To test:
-#arr = np.array(m.im)
-#beforeKmeans = s.paletteTransform(m.im, s.allColors) # Look at this image
-#newMeans= s.kMeansColorSpace(m.downsample(arr, 10), allColors)
-#afterKmeans = paletteTransform(m.im, newMeans) # and this image
+def test():
+    m.loadIm('img2.bmp')
+    print "Transforming palette"
+    b = paletteTransformIm(m.im, allColors)
+    print "Finding connected components"
+    (c,n) = connectedComponents(np.array(b), allColors)
+    print "Displaying result"
+    plt.imshow(c)
+    return c
+    #arr = np.array(m.im)
+    #newMeans= s.kMeansColorSpace(m.downsample(arr, 10), allColors)
+    #afterKmeans = paletteTransform(m.im, newMeans) # and this image

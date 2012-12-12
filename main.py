@@ -22,7 +22,7 @@ panel1 = []
 def wait():
     raw_input("Press enter to continue")
 
-def showImg(img):
+def showImg(img): # for arrays, instead use pl.imshow
     if show:
         im2 = ImageTk.PhotoImage(img, master=root)
         local = tk.Toplevel(master=root)
@@ -39,7 +39,8 @@ def showBinaryImg(img):
         panel.image = im2
         panel.pack(side="top", fill="both", expand="yes")
 
-def pixelwise(im, transform, mode='RGB'): # the 'transform' function takes in pixel values and outputs other pixel values
+def pixelwiseIm(im, transform, mode='RGB'):
+# the 'transform' function takes in pixel values and outputs other pixel values
     imPix = im.load()
     out = Image.new(mode, im.size)
     outPix = out.load()
@@ -47,6 +48,14 @@ def pixelwise(im, transform, mode='RGB'): # the 'transform' function takes in pi
         for y in range(out.size[1]):
             newColor = transform(imPix[x, y])
             outPix[x, y] = newColor
+    return out
+
+def pixelwiseArr(arr, transform):
+# there must be a better way, but I don't know what it is
+    out = np.zeros(arr.shape)
+    for x in range(arr.shape[0]):
+        for y in range(arr.shape[1]):
+            out[x,y] = transform(arr[x,y])
     return out
 
 def downsample(imArray, byFactor):
