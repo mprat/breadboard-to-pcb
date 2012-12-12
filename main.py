@@ -131,8 +131,14 @@ def makeComponentCallback(event):
     print "End click. Ready to process another"
 
 def segmentationCallback(event):
-    print "Running full segmentation"
-    # TODO
+    print "Running full segmentation; ignoring click location and doing something unrelated"
+    com = seg.getCOM(im)
+    for (size, c) in com:
+        print "Finding component at", int(c[0]), int(c[1])
+        components.append(Component(arr.shape[0], arr.shape[1]))
+        makeComponent(components[-1], (int(c[0]), int(c[1])))
+        seeComponent(components[-1])    
+    print "Done"
 
 def showClickCallback(event):
     print "Click at", event.x, event.y, " with color ", arr[event.y, event.x]
@@ -181,7 +187,7 @@ def main():
         panel1 = tk.Label(root, image=frameimage)
         panel1.pack(side="top", fill="both", expand="yes")
         # panel1.bind("<Button-1>", makeComponentCallback)
-        panel1.bind("<Button-1>", makeComponentCallback)
+        panel1.bind("<Button-1>", segmentationCallback)
 
         # Do mode filtering, show
         # immode = seg.modeFilter(im, 10)
