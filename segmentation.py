@@ -14,24 +14,27 @@ initGreen = np.array((37, 55, 39))
 initBlack = np.array((43, 42, 47))
 initSilver = np.array((130, 129, 125))
 initOrange = np.array((126, 69, 50))
-allColors = [initBeige, initRed, initGreen, initBlack, initBeige]
+allColors = [initBeige, initRed, initGreen, initBlack, initSilver, initOrange]
 
-def kMeansColorSpace(arr, initColors): # HIGHLY recommended to downsample first!
+def kMeansColorSpace(arr, initColors):
     X = arr.reshape(1, -1, 3).squeeze() 
     return cluster.kMeans(X, initColors)    
 
 def paletteTransform(im, palette):
-    imPix = im.load()
-    out = Image.new(im.mode, im.size)
-    outPix = out.load()
-    for x in range(out.size[0]):
-        for y in range(out.size[1]):
-            newColor = tuple(m.closest(imPix[x, y], palette))
-            outPix[x, y] = newColor
-    return out
+    return m.pixelwise(im, lambda pix: tuple(m.closest(pix, palette)))
+
+def connectedComponents(im, palette):
+    # This does not work yet; it is just a stand-in
+    def binaryTransform(px, color):
+        if (px == palette[0]).all():
+            return 1
+        else:
+            return 0
+    return m.pixelwise(im, lambda x: binaryTransform(x, palette[0]), mode='1')
+
 
 # To test:
-#arr = np.array(im)
-#beforeKmeans = paletteTransform(im, allColors) # Look at this image
-#newMeans= kMeansColorSpace(m.downsample(arr, 10), allColors)
-#afterKmeans = paletteTransform(im, newMeans) # and this image
+#arr = np.array(m.im)
+#beforeKmeans = s.paletteTransform(m.im, s.allColors) # Look at this image
+#newMeans= s.kMeansColorSpace(m.downsample(arr, 10), allColors)
+#afterKmeans = paletteTransform(m.im, newMeans) # and this image

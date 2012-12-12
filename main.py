@@ -30,16 +30,31 @@ def showImg(img):
         panel.image = im2
         panel.pack(side="top", fill="both", expand="yes")
 
+def showBinaryImg(img):
+    assert img.mode == '1'
+    if show:
+        im2 = ImageTk.BitmapImage(img, master=root)
+        local = tk.Toplevel(master=root)
+        panel = tk.Label(local, image=im2)
+        panel.image = im2
+        panel.pack(side="top", fill="both", expand="yes")
+
+def pixelwise(im, transform, mode='RGB'): # the 'transform' function takes in pixel values and outputs other pixel values
+    imPix = im.load()
+    out = Image.new(mode, im.size)
+    outPix = out.load()
+    for x in range(out.size[0]):
+        for y in range(out.size[1]):
+            newColor = transform(imPix[x, y])
+            outPix[x, y] = newColor
+    return out
+
 def downsample(imArray, byFactor):
     return imArray[range(0, imArray.shape[0], byFactor)][:, range(0, imArray.shape[1], byFactor)]
 
 def closest(x, options):
-    try:
-        (val, option) = min((np.linalg.norm(x - m),m) for m in options)
-        return option
-    except ValueError: # this happens if two of them have identical norm...
-        print "Two colors equally good, doing something halfway reasonable about it"
-        return options[0] # TOTAL HACK, just pick the first one
+    (val, i) = min((np.linalg.norm(x - m),i) for (i,m) in enumerate(options))
+    return options[i]
 
 def curry_f(f, second):
     def f_curried(first):
@@ -68,7 +83,7 @@ def makeComponent(comp, firstpt):
             ptsfromneighbor = checkNeighbors(pt, checked, comp)
             ptstocheck.update(ptsfromneighbor)
         if loopcounter > 1000:
-            print "Probably detecting a component incorrectly!"
+            print "Breaking after 1000 iterations, probably detecting a component incorrectly!"
             break
 
 def check_breaks():
@@ -152,6 +167,7 @@ def main():
         global panel1
         panel1 = tk.Label(root, image=frameimage)
         panel1.pack(side="top", fill="both", expand="yes")
+        # panel1.bind("<Button-1>", makeComponentCallback)
         panel1.bind("<Button-1>", makeComponentCallback)
 
         # Do mode filtering, show
