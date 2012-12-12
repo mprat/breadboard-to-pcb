@@ -130,6 +130,10 @@ def makeComponentCallback(event):
     seeComponent(components[-1])    
     print "End click. Ready to process another"
 
+def segmentationCallback(event):
+    print "Running full segmentation"
+    # TODO
+
 def showClickCallback(event):
     print "Click at", event.x, event.y, " with color ", arr[event.y, event.x]
 

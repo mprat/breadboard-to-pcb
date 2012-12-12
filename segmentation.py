@@ -34,7 +34,8 @@ def connectedComponents(arr, palette):
         onecolor = m.pixelwiseArr(arr, lambda pix: (pix == color).all())[:,:,0] # all dimensions identical
 
         # remove specks
-        eroded = ndimage.binary_erosion(onecolor)
+        erSize = 4;
+        eroded = ndimage.binary_erosion(onecolor, structure=np.ones((erSize, erSize)))
         reconstructed = ndimage.binary_propagation(eroded, mask=onecolor)
         
         # find connected components
@@ -51,7 +52,19 @@ def test():
     (c,n) = connectedComponents(np.array(b), allColors)
     print "Displaying result"
     plt.imshow(c)
-    return c
+    
+    print "Removing small components"
+    c = c.astype('int')
+    sizes = ndimage.sum(c > 0, c, range(n+1))
+    sizethresh = 100
+    remove = (sizes<sizethresh)[c]
+    c[remove] = 0 # todo - fill with neighbors instead?
+    labels = np.unique(c)
+    c = np.searchsorted(labels, c)
+
+    print "Calculating centers of mass"
+    com = ndimage.measurements.center_of_mass(c, c, range(1, len(np.unique(c))))
+    return com
     #arr = np.array(m.im)
     #newMeans= s.kMeansColorSpace(m.downsample(arr, 10), allColors)
     #afterKmeans = paletteTransform(m.im, newMeans) # and this image
