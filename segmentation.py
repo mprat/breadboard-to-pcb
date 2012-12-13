@@ -50,7 +50,7 @@ def getCOM(im):
     print "Finding connected components"
     (c,n) = connectedComponents(np.array(b), allColors)
     print "Displaying result"
-    plt.imshow(c)
+    m.showImg(Image.fromarray(c))
     
     print "Removing small components"
     c = c.astype('int')
@@ -60,6 +60,8 @@ def getCOM(im):
     c[remove] = 0 # todo - fill with neighbors instead?
     labels = np.unique(c)
     c = np.searchsorted(labels, c)
+    print "Displaying new result"
+    m.showImg(Image.fromarray(c))
 
     print "Calculating centers of mass"
     com = ndimage.measurements.center_of_mass(c, c, range(1, len(np.unique(c))))
