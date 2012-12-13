@@ -1,3 +1,4 @@
+import time
 import Image
 import sys
 import getopt
@@ -250,7 +251,7 @@ def processClickList(frame):
     wires = list()
     for c in comps:
         wires.append(cu.makeWire(c.getPixels()))
-    listWires(wires)
+    makeSchematic(wires, str(int(time.time()) + '_schematic')
 
 def showComps(comps):
     for c in comps:
@@ -260,9 +261,9 @@ def showComps(comps):
         showBinaryImg(i)
         # toshow = ImageTk.PhotoImage(i, master=root)
 
-def listWires(wires):
-    for w in wires:
-	    print w
+def makeSchematic(wires, filename):
+    cu.makeXMLFile(wires, filename)
+    print "Done writing to file"
 
 ################ MAIN EVENT LOOP ####################
 
