@@ -82,8 +82,24 @@ PCB-friendly file format has two main steps. First, the components must be
 identified in the image, and second, the components must be placed in a virtual
 grid representation independent of their relation in the image. 
 
+For our implementation we chose to use python and it's Tkinter, PIL, SciPy, and
+Numpy packages for ease of implementation, user interface, and speed. 
+
 %-------------------------------------------------------------------------
 \subsection{Segmentation into Circuit Components}
+
+\subsubsection{Color Following}
+
+As a first step to tackling the component segmentation problem, we took
+advantage of the natural segmentation in a breadboard picture according to
+color. Components on a breadboard are different colors that are localized in
+one location, so to take advantage of this, we developed an algorithm that
+``grows'' a component based on a given color pixel. A seed color is given to
+the algorithm 
+
+TODO 
+
+\subsubsection{k-Means Clustering}
 
 TODO
 
