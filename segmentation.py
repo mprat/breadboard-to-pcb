@@ -44,10 +44,9 @@ def connectedComponents(arr, palette):
         numcomponents += numlabels
     return (components, numcomponents)
 
-def test():
-    m.loadIm('img2.bmp')
+def getCOM(im):
     print "Transforming palette"
-    b = paletteTransformIm(m.im, allColors)
+    b = paletteTransformIm(im, allColors)
     print "Finding connected components"
     (c,n) = connectedComponents(np.array(b), allColors)
     print "Displaying result"
@@ -64,7 +63,9 @@ def test():
 
     print "Calculating centers of mass"
     com = ndimage.measurements.center_of_mass(c, c, range(1, len(np.unique(c))))
-    return com
+    sizes = ndimage.sum(c > 0, c, range(n+1))
+    sortedCom = sorted(zip(sizes, com), reverse=True)
+    return sortedCom
     #arr = np.array(m.im)
     #newMeans= s.kMeansColorSpace(m.downsample(arr, 10), allColors)
     #afterKmeans = paletteTransform(m.im, newMeans) # and this image

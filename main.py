@@ -6,6 +6,9 @@ import ImageTk
 import Tkinter as tk
 from component import Component
 import segmentation as seg
+from Tkinter import RIGHT, LEFT, BOTH, RAISED
+import ttk
+import Queue
 
 ################### GLOBAL VARS #################
 root = tk.Tk()
@@ -15,7 +18,6 @@ show = True
 arr = []
 components = [] #array of component objects
 im = []
-panel1 = []
 
 ################# UTILITY METHODS ##################
 
@@ -115,7 +117,6 @@ def seeComponent(comp):
         newim.putpixel((c[1], c[0]), (255, 255, 255))
     for c in comp.getBoundary():
         newim.putpixel((c[1], c[0]), (255, 0, 0))
-    #panel1.image = ImageTk.PhotoImage(newim)
     showImg(newim)
 
 
@@ -143,6 +144,61 @@ def segmentationCallback(event):
 def showClickCallback(event):
     print "Click at", event.x, event.y, " with color ", arr[event.y, event.x]
 
+################ COLOR SELECTION GUI ####################
+
+colorQueue = Queue.Queue()
+
+def queueColorCallback(event):
+    print "Enqueueing click at", event.x, event.y, " with color ", arr[event.y, event.x]
+    global colorQueue
+    colorQueue.put(arr[event.y, event.x])
+
+class ColorSelect(ttk.Frame):
+    def __init__(self, parent):
+        ttk.Frame.__init__(self, parent)            
+        self.parent = parent        
+        self.initUI()
+        
+    def initUI(self):
+        self.parent.title("Buttons")
+        self.style = ttk.Style()
+        self.style.theme_use("default")
+        
+        frame = ttk.Frame(self, relief=RAISED, borderwidth=1)
+        frame.pack(fill=BOTH, expand=1)
+        
+        self.pack(fill=BOTH, expand=1)
+        
+        closeButton = tk.Button(self, text="Close")
+        closeButton.pack(side=RIGHT, padx=5, pady=5)
+                
+        numColors = 5
+        self.colorButton = list()
+        for i in range(numColors):
+            self.colorButton.append(tk.Button(self, text="Color " + str(i), foreground="black", background="white", command = (lambda x: lambda: changeButtonColor(self, x))(i)))
+            self.colorButton[i].pack(side=LEFT, padx=5, pady=5)
+        
+        okButton = tk.Button(self, text="OK")
+        okButton.pack(side=RIGHT, padx=5, pady=5)
+        
+        frameimage = ImageTk.PhotoImage(im, master=root)
+        panel1 = tk.Label(frame, image=frameimage)
+        panel1.image = frameimage
+        panel1.pack(side="top", fill="both", expand="yes")
+
+        # # panel1.bind("<Button-1>", makeComponentCallback)
+        panel1.bind("<Button-1>", queueColorCallback)
+        panel1.pack(side=LEFT, padx=5, pady=5)
+
+def changeButtonColor(frame, i):
+    button = frame.colorButton[i]
+    global colorQueue
+    try:
+        color = colorQueue.get_nowait()
+        print "Got color", color
+        button["bg"] = "#%02x%02x%02x" % tuple(color)
+    except:
+        print "Incorrect use; click on a pixel first"
 
 ################ MAIN EVENT LOOP ####################
 
@@ -152,6 +208,7 @@ def loadIm(filename):
     global arr
     arr = np.array(im) #r = arr[:, :, 0] etc.
     print im.format, im.size, im.mode 
+    return im
 
 def main():
     """Main loop.
@@ -179,20 +236,18 @@ def main():
 
         # Load the image
         filename = sys.argv[1]
-        loadIm(filename)
+        im = loadIm(filename)
         
         # Set up main panel with appropriate callback
-        frameimage = ImageTk.PhotoImage(im, master=root)
-        global panel1
-        panel1 = tk.Label(root, image=frameimage)
-        panel1.pack(side="top", fill="both", expand="yes")
-        # panel1.bind("<Button-1>", makeComponentCallback)
-        panel1.bind("<Button-1>", segmentationCallback)
+        # frameimage = ImageTk.PhotoImage(im, master=root)
+        # panel1 = tk.Label(root, image=frameimage)
+        # panel1.pack(side="top", fill="both", expand="yes")
+        # # panel1.bind("<Button-1>", makeComponentCallback)
+        # panel1.bind("<Button-1>", segmentationCallback)
 
-        # Do mode filtering, show
-        # immode = seg.modeFilter(im, 10)
-        # showImg(immode)
-        
+#        root.geometry("300x200+300+300")
+        app = ColorSelect(root)
+
         root.mainloop()
 
 if __name__ == "__main__":
