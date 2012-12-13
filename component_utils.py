@@ -6,43 +6,28 @@ def addPixelLoc(newpixelloc, newrgbcolor, pixelLocations, RGBcolors, boundarypix
 	if (len(boundarypixels) < 1):
 		boundarypixels.add(newpixelloc)
 	else:
-		self.updateNeighbors(newpixelloc) #TOFIX
+		updateNeighbors(newpixelloc, boundarypixels) #TOFIX
 
-def updateNeighbors(newpixelloc, boundarypixels):
+def updateNeighbors(newpixelloc, pixelLocations, boundarypixels, img_width, img_height):
 	neighborstoupdate = [newpixelloc]
 
 	while (len(neighborstoupdate) > 0):
 		neighbortoupdate = neighborstoupdate.pop()
-		if self.isBoundary(neighbortoupdate):
+		if isBoundary(neighbortoupdate, pixelLocations, boundarypixels, img_width, img_height):
 			boundarypixels.add(neighbortoupdate)
-			for n in self.neighborsInComp(neighbortoupdate):
-				if not self.isBoundary(n) and n in boundarypixels:
+			for n in neighborsInComp(neighbortoupdate, pixelLocations, img_width, img_height):
+				if not isBoundary(n, pixelLocations, boundarypixels, img_width, img_height) and n in boundarypixels:
 					boundarypixels.remove(n)
-					neighborstoupdate.extend(self.neighborsInComp(n))
+					neighborstoupdate.extend(neighborsInComp(n, pixelLocations, img_width, img_height))
 
-def getLeftMostPixel(boundarypixels):
-	return min(boundarypixels, key=lambda x:x[0])
-
-def getRightMostPixel(boundarypixels):
-	return max(boundarypixels, key=lambda x:x[0])
-
-def getTopMostPixel(boundarypixels):
-	return max(boundarypixels, key=lambda x:x[1])
-
-def getBottomMostPixel(boundarypixels):
-	return min(boundarypixels, key=lambda x:x[1])
-
-def isBoundary(pixelloc, boundarypixels):
-	#neighbors = self.getValidNeighbors(pixelloc)
-	#if sum([n not in self.pixelloc for n in neighbors]) >= 3:
-	#	return True
-	if 8 - len(self.neighborsInComp(pixelloc)) >= 3:
-		boundarypixels.add(pixelloc)
+def isBoundary(newpixelloc, pixelLocations, boundarypixels, img_width, img_height):
+	if 8 - len(neighborsInComp(newpixelloc, pixelLocations, img_width, img_height)) >= 3:
+		boundarypixels.add(newpixelloc)
 		return True
 
-def neighborsInComp(pixelloc):
+def neighborsInComp(newpixelloc, pixelLocations, img_width, img_height):
 	#use set intersection for faster performance
-	return [i for i in self.getValidNeighbors(pixelloc) if i in self.pixelLoc]
+	return [i for i in getValidNeighbors(newpixelloc, img_width, img_height) if i in pixelLocations]
 
 def getRGBavg(RGBcolors):
 	#axis=0 means the rgb-triple is the thing being averaged
@@ -53,7 +38,7 @@ def getRGBavg(RGBcolors):
 		return np.average(RGBcolors, axis=0)
 
 def getRGBavgastuple(RGBcolors):
-	return tuple(map(int, self.getRGBavg(RGBcolors)))
+	return tuple(map(int, getRGBavg(RGBcolors)))
 
 def closeRGB(rgb, RGBavg):
 	return np.linalg.norm(RGBavg - rgb)
@@ -84,4 +69,16 @@ def getValidNeighbors(pt, img_width, img_height, nsew_only=False):
 	if pt[0] + 1 < img_height:
 		positions.add((pt[0] + 1, pt[1])) #8
 	return positions
+
+def getLeftMostPixel(boundarypixels):
+	return min(boundarypixels, key=lambda x:x[0])
+
+def getRightMostPixel(boundarypixels):
+	return max(boundarypixels, key=lambda x:x[0])
+
+def getTopMostPixel(boundarypixels):
+	return max(boundarypixels, key=lambda x:x[1])
+
+def getBottomMostPixel(boundarypixels):
+	return min(boundarypixels, key=lambda x:x[1])
 
