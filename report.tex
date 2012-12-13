@@ -72,7 +72,28 @@ form (pixel representation) to a different more general representation
 
 \section{Related Work}
 
-TODO
+\subsection{Properties of Breadboards}
+
+When solving vision-based problems, it is critical to know your system
+properties to better develop algorithms customized to the strengths and
+weaknesses of a particular application. Photos of breadboards have a number of
+interesting properties that can be useful in segmentation, identification, and
+restructuring tasks. A number of visually-interesting properties are listed here:
+\begin{itemize}
+\item A single component on a breadboard, such as a wire, LED, or chip is often a single color. 
+\item The colors of the various components are often easily visually distinguishable. 
+\item The breadboard is often square with the image. 
+\item The breadboard, when not covered with components, has a black checkered pattern of holes in it. 
+\item The breadboard color is relatively constant over the entire breadboard, except for the holes.
+\end{itemize}
+
+\subsection{Schematic-drawing Software}
+
+The Eagle program, developed by CADSoft, is a free schematic and PCB-drawing
+software that translates schematics into a PCB-ready format. The Eagle file
+format is a type of XML, which makes it easy to programmatically update from an
+image. Eagle PCB and schematic diagrams are based off of the same language, so
+drawing a schematic in Eagle is sufficient to computing the full PCB. 
 
 %-------------------------------------------------------------------------
 \section{The Approach}
@@ -121,13 +142,23 @@ problem.
 
 \subsection{Virtual Grid Representation}
 
-The next 
-TODO
+The next component of the project involved translating the component data into
+a schematic. Knowing all the pixel locations that make up a component, we
+calculate the end pixel positions of each component rounded to the nearest
+$10$. Because components are aligned to the hole-grid that is present on the
+breadboard,  
 
 %-------------------------------------------------------------------------
 \section{Results}
 
+\subsection{Comparing Color-following and k-Means Clustering}
+
 TODO
+
+%-------------------------------------------------------------------------
+\section{Future Work}
+
+TODO: automatically identify components
 
 %-------------------------------------------------------------------------
 \section{Conclusion}
