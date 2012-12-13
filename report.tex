@@ -53,24 +53,44 @@ TODO: Write the abstract.
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 
-Breadboards are an important tool for do-it-yourself hardware designers to
-quickly test circuit systems. They are easy to assemble, easy to change, and
-easy to test, so are the tool of choice for the first prototype of many
-hobbyists and students. A programmatically-drawn, or more likely hand-drawn,
-schematic diagram is used to prototype the circuit board, but if the circuit is
-going to be used for high-speed, low-noise, or multiple-production
-applications, a printed circuit board (PCB) is much more desirable than a
-breadboard. Our approach to solve this problem was a vision-based tool designed
-to go from a picture of a breadboard circuit to a file written in a PCB-ready
-format given by Eagle. Through a variety of approaches, we found the task too
-large and have implemented pieces of the full pipeline. Them main goal of the
-project was to transform the information about the circuit that we had in image
-form (pixel representation) to a different more general representation
-(component representation). 
+Breadboards are an important tool for do-it-yourself hardware
+designers to quickly test circuit systems. They are easy to assemble,
+easy to change, and easy to test, so are the tool of choice for the
+first prototype of many hobbyists and students. A
+programmatically-drawn, or more likely hand-drawn, schematic diagram
+is used to prototype the circuit board, but if the circuit is going to
+be used for high-speed, low-noise, or multiple-production
+applications, a printed circuit board (PCB) is much more desirable
+than a breadboard. However, it can be time-consuming to enter a
+breadboard's connection map into a programmatic language that can be
+used to generate a PCB. It would be faster to create a PCB-ready
+representation directly from the circuitboard. Even if the result had
+errors, these could be corrected by the user in less time than it
+would take to create the representation from scratch.
+
+Our approach to solve this problem was a vision-based tool to
+go from a picture of a breadboard circuit to a file written in a
+PCB-ready format given by Eagle. Although a fully-automated tool
+proved to be too large a task for this project, we have successfully
+implemented a GUI-based tool that spans the full pipeline from
+bitmap image input to PCB-ready output by incorporating automated
+methods with input from the user.
+
+Overall, this project was an exercise not only in computer vision
+methods for recognition and segmentation, but also in more general
+problems of visualization; modularity; and designing, manipulating,
+and transforming between representations on a spectrum from
+concrete (pixel-level) to abstract (component-level).
 
 %-------------------------------------------------------------------------
 
 \section{Related Work}
+
+TODO, if any
+
+%-------------------------------------------------------------------------
+
+\section{Background}
 
 \subsection{Properties of Breadboards}
 
@@ -85,14 +105,15 @@ restructuring tasks. A number of visually-interesting properties are listed here
 \item The breadboard is often square with the image. 
 \item The breadboard, when not covered with components, has a black checkered pattern of holes in it. 
 \item The breadboard color is relatively constant over the entire breadboard, except for the holes.
-\item Breadboards follow a specific connectivity pattern. In Figure \ref{fig:board}, each column (not including the ttop two and bottom two rows) can be considered a single connection. The middle gap in the square holes is a break in the connection for each column, so there are five total holes connected to one connection in each of the columns. The top two and bottom rwo rows are connected horizontally into a single connection. Typically, one denotes a voltage of $+5$ volts and one denotes \verb|GND|, or $0$ volts. 
+\item Breadboards follow a specific connectivity pattern. In Figure \ref{fig:board}, each column (not including the top two and bottom two rows) can be considered a single connection. The middle gap in the square holes is a break in the connection for each column, so there are five total holes connected to one connection in each of the columns. The top two and bottom rwo rows are connected horizontally into a single connection. Typically, one denotes a voltage of $+5$ volts and one denotes \verb|GND|, or $0$ volts. 
 \end{itemize}
 
 \begin{figure}[t]
 \begin{center}
-   \includegraphics[width=0.8\linewidth]{imgs/breadboard.jpg}
+   %\includegraphics[width=0.8\linewidth]{imgs/breadboard.jpg}
 \end{center}
-   \caption{A breadboard oriented like those oriented in images that we can process}
+   \caption{A breadboard oriented like those oriented in images that
+     we can process, before any components have been added to it}
 \label{fig:board}
 \end{figure}
 
@@ -109,11 +130,26 @@ drawing a schematic in Eagle is sufficient to computing the full PCB.
 
 \section{User Interface of our Tool}
 
-TODO. Explain what the tool looks like from the point of view of the
-user. There's a GUI. They run it on their image, see the image, pick
-the primary colors. It thinks for a while and then shows them its
-segmentation. The user picks the components they want to include in
-the final layout and it lays them out for them.
+From the point of view of the user, the workflow of our tool is as
+follows:
+
+\begin{enumerate}
+\item Start the program, indicating the filename of the bitmap image
+  containing a photograph of the breadboard.
+\item Select the most important colors in the image. For example, a
+  beige breadboard with red and green wires and a black microchip
+  would require the user to click on examples of those four colors.
+\item Confirm the selected colors to view a segmentation map of the image
+  based on those colors.
+\item Select the components in the segmentation map which should be
+  analyzed and included in the final schematic.
+\item Confirm the selected components and obtain an XML version of
+  their connectivity.
+\end{enumerate}
+
+In the following sections we will explain more about our approach to
+the problem, the results we obtained, and the limitations of our tool
+and techniques.
 
 %-------------------------------------------------------------------------
 \section{The Approach}
@@ -150,7 +186,24 @@ incorrect results.
 
 \subsubsection{Segmentation by Nearest Color}
 
-catherio will write this
+Idea is to segment on color by quantizing the color of the
+image and finding connected components in the quantized color space.
+
+Overall algorithm:
+\begin{enumerate}
+\item Use a 3D clustering algorithm to find representative colors. We
+  wanted to use k-means, but it didn't work. The user picks these.
+\item Map colors to the nearest representative color- ie, divide up
+  the colorspace into Voronoi regions with Euclidean distance in
+  RGB-space.
+\item Find connected components of each color. Standard algorithms
+  work on binary masks, so run each color independently
+\item (Optional) Eliminate small connected components using binary
+  erosion/propagation. We got this part working, but it is not needed
+  in the current user-assisted workflow.
+\end{enumerate}
+
+Shows some problems, but generally works well enough for this application.
 
 \subsection{Occlusion Handling}
 
@@ -177,7 +230,7 @@ file is constructed with the proper sschematic-XML information.
 %-------------------------------------------------------------------------
 \section{Results}
 
-\subsection{Comparing Color-following and k-Means Clustering}
+\subsection{Comparing Color-following and Nearest-color Segmentation}
 
 TODO
 
