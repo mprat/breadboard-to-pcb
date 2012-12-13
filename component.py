@@ -3,7 +3,6 @@ import numpy as np
 class Component:
 	def __init__(self, mask):
 		self.mask = mask
-		print self.mask.shape
 	
 	def getPixels(self):
 		pixels = []
