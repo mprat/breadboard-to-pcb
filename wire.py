@@ -6,7 +6,7 @@ class Wire:
 		self.y2 = y2
 
 	def toXML(self):
-		return '<wire x1=\"' + str(x1) + '\" y1=\"' + str(y1) + '\" x2=\"' + str(x2) + '\" y2=\"' +  str(y2) + '\"width=\"0.1524\" layer=\"1\"/>' 	
+		return '<wire x1=\"' + str(self.x1) + '\" y1=\"' + str(self.y1) + '\" x2=\"' + str(self.x2) + '\" y2=\"' +  str(self.y2) + '\"width=\"0.1524\" layer=\"1\"/>' 	
 
 	def __str__(self):
-		return self.xml
+		return self.toXML()
