@@ -1,4 +1,5 @@
 import numpy as np
+import wire as w
 
 def addPixelLoc(newpixelloc, newrgbcolor, pixelLocations, RGBcolors, boundarypixels):
 	pixelLocations.append(newpixelloc)
@@ -70,15 +71,24 @@ def getValidNeighbors(pt, img_width, img_height, nsew_only=False):
 		positions.add((pt[0] + 1, pt[1])) #8
 	return positions
 
-def getLeftMostPixel(boundarypixels):
-	return min(boundarypixels, key=lambda x:x[0])
+def getLeftMostPixel(pixels):
+	return min(pixels, key=lambda x:x[0])
 
-def getRightMostPixel(boundarypixels):
-	return max(boundarypixels, key=lambda x:x[0])
+def getRightMostPixel(pixels):
+	return max(pixels, key=lambda x:x[0])
 
-def getTopMostPixel(boundarypixels):
-	return max(boundarypixels, key=lambda x:x[1])
+def getTopMostPixel(pixels):
+	return max(pixels, key=lambda x:x[1])
 
-def getBottomMostPixel(boundarypixels):
-	return min(boundarypixels, key=lambda x:x[1])
+def getBottomMostPixel(pixels):
+	return min(pixels, key=lambda x:x[1])
 
+def makeWire(pixels):
+	left = getLeftMostPixel(pixels)
+	right = getRightMostPixel(pixels)
+	top = getTopMostPixel(pixels)
+	bottom = getBottomMostPixel(pixels)
+	if (np.linalg.norm(left - right) < 2):
+		return w.Wire(top[0], top[1], bottom[0], bottom[1])
+	elif (np.linalg.norm(top - bottom) < 2):
+		return w.Wire(left[0], left[1], right[0], right[1])
