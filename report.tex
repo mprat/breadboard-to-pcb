@@ -106,6 +106,16 @@ image. Eagle PCB and schematic diagrams are based off of the same language, so
 drawing a schematic in Eagle is sufficient to computing the full PCB. 
 
 %-------------------------------------------------------------------------
+
+\section{User Interface of our Tool}
+
+TODO. Explain what the tool looks like from the point of view of the
+user. There's a GUI. They run it on their image, see the image, pick
+the primary colors. It thinks for a while and then shows them its
+segmentation. The user picks the components they want to include in
+the final layout and it lays them out for them.
+
+%-------------------------------------------------------------------------
 \section{The Approach}
 
 The problem of translating information from a picture of a circuit to a
@@ -138,9 +148,9 @@ running average that the algorithm will calculate will be off from the actual
 running average of the color of the component, so the algorithm will return
 incorrect results.   
 
-\subsubsection{k-Means Clustering}
+\subsubsection{Segmentation by Nearest Color}
 
-TODO
+catherio will write this
 
 \subsection{Occlusion Handling}
 
