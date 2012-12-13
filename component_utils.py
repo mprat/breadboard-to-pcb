@@ -88,7 +88,12 @@ def makeWire(pixels):
 	right = getRightMostPixel(pixels)
 	top = getTopMostPixel(pixels)
 	bottom = getBottomMostPixel(pixels)
-	if (np.linalg.norm(left - right) < 2):
+	LRdist = abs(left[0] - right[0])
+	UDdist = abs(top[1] - bottom[1])
+	if UDdist > LRdist:
 		return w.Wire(top[0], top[1], bottom[0], bottom[1])
-	elif (np.linalg.norm(top - bottom) < 2):
+	else:
 		return w.Wire(left[0], left[1], right[0], right[1])
+
+def roundInt(num):
+	return int(10*round(float(num)/10))

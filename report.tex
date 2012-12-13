@@ -95,16 +95,33 @@ advantage of the natural segmentation in a breadboard picture according to
 color. Components on a breadboard are different colors that are localized in
 one location, so to take advantage of this, we developed an algorithm that
 ``grows'' a component based on a given color pixel. A seed color is given to
-the algorithm 
+the algorithm and added to an active set of pixels. For each neighbor of each
+pixel in the active set, the decision is made whether that pixel is in the
+component if the pixel does not change the running RGB color-average of all the
+pixels current in the component. If a pixel is added to a component, it is then
+also added to the active set and the algorithm continues.     
 
-TODO 
+The main problem with this algorithm is that it is highly dependent on the seed
+pixel to the image. If a pixel is chosen that is too dark for example, the
+running average that the algorithm will calculate will be off from the actual
+running average of the color of the component, so the algorithm will return
+incorrect results.   
 
 \subsubsection{k-Means Clustering}
 
 TODO
 
+\subsection{Occlusion Handling}
+
+A problem with breadboard circuits is often that components (most often wires)
+are occluded from each other. This is a critical issue that in any finalized
+version of a product like this needs to be addressed. Because we ran into other
+issues with our approach, we were not able to effectively solve the occlusion
+problem.  
+
 \subsection{Virtual Grid Representation}
 
+The next 
 TODO
 
 %-------------------------------------------------------------------------

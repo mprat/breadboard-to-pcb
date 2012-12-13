@@ -10,6 +10,7 @@ from Tkinter import RIGHT, LEFT, BOTH, RAISED, DISABLED
 import ttk
 import Queue
 import matplotlib.pyplot as plt
+import component_utils as cu
 
 ################### GLOBAL VARS #################
 root = tk.Tk()
@@ -246,7 +247,10 @@ def processClickList(frame):
         mask = (frame.labels == frame.labels[click[0], click[1]])
         comps.append(Component(mask))
     showComps(comps)
-    # DO SOMETHING WITH COMPS
+    wires = list()
+    for c in comps:
+        wires.append(cu.makeWire(c.getPixels()))
+    listWires(wires)
 
 def showComps(comps):
     for c in comps:
@@ -255,6 +259,10 @@ def showComps(comps):
         i.mode = '1'
         showBinaryImg(i)
         # toshow = ImageTk.PhotoImage(i, master=root)
+
+def listWires(wires):
+    for w in wires:
+	    print w
 
 ################ MAIN EVENT LOOP ####################
 
