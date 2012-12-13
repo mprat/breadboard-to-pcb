@@ -104,6 +104,7 @@ def makeComponentCallback(event):
     #wires[-1].addPixelLoc([event.y, event.x])
     makeComponent(components[-1], (event.y, event.x))
     seeComponent(components[-1])    
+    components[-1].getLeftMostPixel()
     print "End click. Ready to process another"
 
 def showClickCallback(event):
@@ -135,8 +136,8 @@ def main():
 	    print main.__doc__
 	    sys.exit(0)
     if (len(args) != 2):
-	print "Incorrect command line arguments. For help use --help"
-	sys.exit(0)
+        print "Incorrect command line arguments. For help use --help"
+        sys.exit(0)
     else:
         # Set up configuration
         showstr = sys.argv[2]

@@ -28,11 +28,17 @@ class Component:
 						self.boundarypixels.remove(n)
 						neighborstoupdate.extend(self.neighborsInComp(n))
 	
-	def getEnds(self):
-		return False
+	def getLeftMostPixel(self):
+		return min(self.boundarypixels, key=lambda x:x[0])
 
-	def breakBoundary(self):
-		return False
+	def getRightMostPixel(self):
+		return max(self.boundarypixels, key=lambda x:x[0])
+	
+	def getTopMostPixel(self):
+		return max(self.boundarypixels, key=lambda x:x[1])
+
+	def getBottomMostPixel(self):
+		return min(self.boundarypixels, key=lambda x:x[1])
 
 	def isBoundary(self, pixelloc):
 		#neighbors = self.getValidNeighbors(pixelloc)
@@ -47,7 +53,8 @@ class Component:
 		return [i for i in self.getValidNeighbors(pixelloc) if i in self.pixelLoc]
 	
 	def __str__(self):
-		return self.pixelLoc.__str__()
+		print "pixelloc = ", self.pixelLoc.__str__()
+		return self.xml
 
 	def getPixelLoc(self):
 		return self.pixelLoc
