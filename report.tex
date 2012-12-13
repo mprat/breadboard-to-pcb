@@ -7,6 +7,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
+\usepackage{caption}
+\usepackage{subcaption}
+
 % Include other packages here, before hyperref.
 
 % If you comment hyperref and then uncomment it, you should delete
@@ -96,7 +99,6 @@ restructuring tasks. A number of visually-interesting properties are listed here
 \label{fig:board}
 \end{figure}
 
-
 \subsection{Schematic-drawing Software}
 
 The Eagle program, developed by CADSoft, is a free schematic and PCB-drawing
@@ -128,6 +130,10 @@ Numpy packages for ease of implementation, user interface, and speed.
 
 %-------------------------------------------------------------------------
 \subsection{Segmentation into Circuit Components}
+
+At first we were unsure about which approach towards segmentation into image
+components was going to be more effective, so we tried two algorithms for
+detecting components. 
 
 \subsubsection{Color Following}
 
@@ -177,9 +183,48 @@ file is constructed with the proper sschematic-XML information.
 %-------------------------------------------------------------------------
 \section{Results}
 
-\subsection{Comparing Color-following and Segmentation by Nearest Color}
+\subsection{The Full Spectrum}
 
 TODO
+
+\subsection{Comparing Color-following and Segmentation by Nearest Color}
+
+The color-following and nearest-color algorithms solve somewhat different
+problems. The color-following algorithm assumes a seed pixel (whether given
+programmatically or by a user) and constructs a component from that seed pixel,
+while the nearest-color algorithm separates the image into sections based on
+colors found in the entire image. In both bases, if the same component is
+found, it should be found correctly. Given that the exact parameters for both
+algorithms were not perfectly tuned, these results are a comparison of the
+current implementations of the algorithms as we have them.
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/original_of_comp.png}
+	\caption{The original image}
+	\label{fig:origcomp}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/single_wire_not_double.png}
+	\caption{The white wire detected by the color-following algorithm}
+	\label{fig:cfollow}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/closest_color.png}
+   \caption{Note the same wire incorrectly detected by the closet-color algorithm}
+	\label{fig:ncolor}
+\end{subfigure}
+\end{figure}
+
+Figure \ref{fig:origcomp} has the original image that we are analyzing. Figure
+\ref{fig:cfollow} shows one wire detected by the color-following algorithm.
+Note how, given a particularly good seed color, it was able to only detect one
+of the two wires that are nearest each other. In Figure \ref{fig:ncolor}, note
+the same wire is detected as a single wire with the wire immediately below it. 
 
 \subsection{Limitations}
 

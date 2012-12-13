@@ -251,7 +251,7 @@ def processClickList(frame):
     wires = list()
     for c in comps:
         wires.append(cu.makeWire(c.getPixels()))
-    makeSchematic(wires, str(int(time.time()) + '_schematic')
+    makeSchematic(wires, str(int(time.time())) + '_schematic')
 
 def showComps(comps):
     for c in comps:
