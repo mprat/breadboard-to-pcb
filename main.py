@@ -6,9 +6,10 @@ import ImageTk
 import Tkinter as tk
 from component import Component
 import segmentation as seg
-from Tkinter import RIGHT, LEFT, BOTH, RAISED
+from Tkinter import RIGHT, LEFT, BOTH, RAISED, DISABLED
 import ttk
 import Queue
+import matplotlib.pyplot as plt
 
 ################### GLOBAL VARS #################
 root = tk.Tk()
@@ -64,7 +65,7 @@ def downsample(imArray, byFactor):
     return imArray[range(0, imArray.shape[0], byFactor)][:, range(0, imArray.shape[1], byFactor)]
 
 def closest(x, options):
-    (val, i) = min((np.linalg.norm(x - m),i) for (i,m) in enumerate(options))
+    (val, i) = min((np.linalg.norm(np.array(x) - np.array(m)),i) for (i,m) in enumerate(options))
     return options[i]
 
 def curry_f(f, second):
@@ -72,6 +73,19 @@ def curry_f(f, second):
         print first
         return f(first, second)
     return f_curried
+
+def rgbToHex(rgb):
+    return "#%02x%02x%02x" % tuple(rgb)
+
+def hexToRgb(colorstring):
+    """ convert #RRGGBB to an (R, G, B) tuple """
+    colorstring = colorstring.strip()
+    if colorstring[0] == '#': colorstring = colorstring[1:]
+    if len(colorstring) != 6:
+        raise ValueError, "input #%s is not in #RRGGBB format" % colorstring
+    r, g, b = colorstring[:2], colorstring[2:4], colorstring[4:]
+    r, g, b = [int(n, 16) for n in (r, g, b)]
+    return (r, g, b)
 
 ################# COMPONENT-FINDING METHODS ##################
 
@@ -144,14 +158,19 @@ def segmentationCallback(event):
 def showClickCallback(event):
     print "Click at", event.x, event.y, " with color ", arr[event.y, event.x]
 
-################ COLOR SELECTION GUI ####################
-
 colorQueue = Queue.Queue()
-
 def queueColorCallback(event):
-    print "Enqueueing click at", event.x, event.y, " with color ", arr[event.y, event.x]
+    print "Enqueueing click at", event.x, event.y, " by color ", arr[event.y, event.x]
     global colorQueue
-    colorQueue.put(arr[event.y, event.x])
+    colorQueue.put(arr[event.y, event.x]) # intentionally reversed
+
+clickList = list()
+def accumulateClicksCallback(event):
+    print "Enqueueing click at", event.x, event.y, " by position"
+    global clickList
+    clickList.append([event.y, event.x]) # intentionally reversed
+
+################ COLOR SELECTION GUI ####################
 
 class ColorSelect(ttk.Frame):
     def __init__(self, parent):
@@ -168,27 +187,23 @@ class ColorSelect(ttk.Frame):
         frame.pack(fill=BOTH, expand=1)
         
         self.pack(fill=BOTH, expand=1)
-        
-        closeButton = tk.Button(self, text="Close")
-        closeButton.pack(side=RIGHT, padx=5, pady=5)
                 
         numColors = 5
         self.colorButton = list()
         for i in range(numColors):
-            self.colorButton.append(tk.Button(self, text="Color " + str(i), foreground="black", background="white", command = (lambda x: lambda: changeButtonColor(self, x))(i)))
+            self.colorButton.append(tk.Button(self, text="Color " + str(i), foreground="#000000", background="#FFFFFF", command = (lambda x: lambda: changeButtonColor(self, x))(i)))
             self.colorButton[i].pack(side=LEFT, padx=5, pady=5)
         
-        okButton = tk.Button(self, text="OK")
-        okButton.pack(side=RIGHT, padx=5, pady=5)
+        self.okButton = tk.Button(self, text="OK", command = (lambda: confirmColors(self)))
+        self.okButton.pack(side=RIGHT, padx=5, pady=5)
         
         frameimage = ImageTk.PhotoImage(im, master=root)
-        panel1 = tk.Label(frame, image=frameimage)
-        panel1.image = frameimage
-        panel1.pack(side="top", fill="both", expand="yes")
+        self.panel1 = tk.Label(frame, image=frameimage)
+        self.panel1.image = frameimage
+        self.panel1.pack(side="top", fill="both", expand="yes")
 
-        # # panel1.bind("<Button-1>", makeComponentCallback)
-        panel1.bind("<Button-1>", queueColorCallback)
-        panel1.pack(side=LEFT, padx=5, pady=5)
+        self.panel1.bind("<Button-1>", queueColorCallback)
+        self.panel1.pack(side=LEFT, padx=5, pady=5)
 
 def changeButtonColor(frame, i):
     button = frame.colorButton[i]
@@ -196,9 +211,37 @@ def changeButtonColor(frame, i):
     try:
         color = colorQueue.get_nowait()
         print "Got color", color
-        button["bg"] = "#%02x%02x%02x" % tuple(color)
+        button["bg"] = rgbToHex(color)
     except:
         print "Incorrect use; click on a pixel first"
+
+def confirmColors(frame):
+    for button in frame.colorButton:
+        button["state"] = DISABLED
+
+    # Do the transformation
+    palette = [hexToRgb(button["bg"]) for button in frame.colorButton]
+    print "Transforming palette"
+    b = seg.paletteTransformIm(im, palette) # TODO: not im, use more generalized
+    print "Finding connected components"
+    (c,n) = seg.connectedComponents(np.array(b), palette)
+    frame.labels = c
+    frame.nlabels = n
+    
+    # Set up new GUI appearance/functionality
+    print "Displaying result"
+    c_im = Image.fromarray(c)
+    toshow = ImageTk.PhotoImage(c_im, master=root)
+    frame.panel1["image"] = toshow
+    frame.panel1.image = toshow
+    frame.panel1.bind("<Button-1>", accumulateClicksCallback)
+    frame.okButton["command"] = (lambda: processClickList(frame))
+    print "Done"
+
+def processClickList(frame):
+    print "Processing click list!"
+    print clickList
+    
 
 ################ MAIN EVENT LOOP ####################
 
