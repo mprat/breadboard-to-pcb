@@ -1,0 +1,125 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Include other packages here, before hyperref.
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+%\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+
+\cvprfinalcopy % *** Uncomment this line for the final submission
+
+%\def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+%\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+% Pages are numbered in submission mode, and unnumbered in camera-ready
+\ifcvprfinal\pagestyle{empty}\fi
+\begin{document}
+
+%%%%%%%%% TITLE
+\title{Breadboard to Schematic}
+
+\author{Catherine Olsson \\
+MIT\\
+{\tt\small catherio@mit.edu}
+% For a paper whose authors are all at the same institution,
+% omit the following lines up until the closing ``}''.
+% Additional authors and addresses can be added with ``\and'',
+% just like the second author.
+% To save space, use either the email address or home page, not both
+\and
+Michele Pratusevich\\
+MIT\\
+{\tt\small mprat@mit.edu}
+}
+
+\maketitle
+\thispagestyle{empty}
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+
+TODO: Write the abstract.
+
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+\section{Introduction}
+
+Breadboards are an important tool for do-it-yourself hardware designers to
+quickly test circuit systems. They are easy to assemble, easy to change, and
+easy to test, so are the tool of choice for the first prototype of many
+hobbyists and students. A programmatically-drawn, or more likely hand-drawn,
+schematic diagram is used to prototype the circuit board, but if the circuit is
+going to be used for high-speed, low-noise, or multiple-production
+applications, a printed circuit board (PCB) is much more desirable than a
+breadboard. Our approach to solve this problem was a vision-based tool designed
+to go from a picture of a breadboard circuit to a file written in a PCB-ready
+format given by Eagle. Through a variety of approaches, we found the task too
+large and have implemented pieces of the full pipeline. Them main goal of the
+project was to transform the information about the circuit that we had in image
+form (pixel representation) to a different more general representation
+(component representation). 
+
+%-------------------------------------------------------------------------
+
+\section{Related Work}
+
+TODO
+
+%-------------------------------------------------------------------------
+\section{The Approach}
+
+The problem of translating information from a picture of a circuit to a
+PCB-friendly file format has two main steps. First, the components must be
+identified in the image, and second, the components must be placed in a virtual
+grid representation independent of their relation in the image. 
+
+For our implementation we chose to use python and it's Tkinter, PIL, SciPy, and
+Numpy packages for ease of implementation, user interface, and speed. 
+
+%-------------------------------------------------------------------------
+\subsection{Segmentation into Circuit Components}
+
+\subsubsection{Color Following}
+
+As a first step to tackling the component segmentation problem, we took
+advantage of the natural segmentation in a breadboard picture according to
+color. Components on a breadboard are different colors that are localized in
+one location, so to take advantage of this, we developed an algorithm that
+``grows'' a component based on a given color pixel. A seed color is given to
+the algorithm 
+
+TODO 
+
+\subsubsection{k-Means Clustering}
+
+TODO
+
+\subsection{Virtual Grid Representation}
+
+TODO
+
+%-------------------------------------------------------------------------
+\section{Results}
+
+TODO
+
+%-------------------------------------------------------------------------
+\section{Conclusion}
+
+TODO
+
+{\small
+\bibliographystyle{ieee}
+\bibliography{egbib}
+}
+
+\end{document}
