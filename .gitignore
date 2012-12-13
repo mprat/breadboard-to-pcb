@@ -37,3 +37,7 @@ nosetests.xml
 #other
 *.swp
 *.swo
+
+#latex
+*.log
+*.aux
