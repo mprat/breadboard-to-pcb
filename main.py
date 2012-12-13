@@ -241,8 +241,20 @@ def confirmColors(frame):
 
 def processClickList(frame):
     print "Processing click list!"
-    print clickList
-    
+    comps = list()
+    for click in clickList:
+        mask = (frame.labels == frame.labels[click[0], click[1]])
+        comps.append(Component(mask))
+    showComps(comps)
+    # DO SOMETHING WITH COMPS
+
+def showComps(comps):
+    for c in comps:
+        mask = c.getMask()
+        i = Image.fromarray(mask)
+        i.mode = '1'
+        showBinaryImg(i)
+        # toshow = ImageTk.PhotoImage(i, master=root)
 
 ################ MAIN EVENT LOOP ####################
 

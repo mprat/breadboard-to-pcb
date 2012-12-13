@@ -71,3 +71,6 @@ def getCOM(im):
     #arr = np.array(m.im)
     #newMeans= s.kMeansColorSpace(m.downsample(arr, 10), allColors)
     #afterKmeans = paletteTransform(m.im, newMeans) # and this image
+
+    
+    
