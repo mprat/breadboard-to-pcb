@@ -85,7 +85,17 @@ restructuring tasks. A number of visually-interesting properties are listed here
 \item The breadboard is often square with the image. 
 \item The breadboard, when not covered with components, has a black checkered pattern of holes in it. 
 \item The breadboard color is relatively constant over the entire breadboard, except for the holes.
+\item Breadboards follow a specific connectivity pattern. In Figure \ref{fig:board}, each column (not including the ttop two and bottom two rows) can be considered a single connection. The middle gap in the square holes is a break in the connection for each column, so there are five total holes connected to one connection in each of the columns. The top two and bottom rwo rows are connected horizontally into a single connection. Typically, one denotes a voltage of $+5$ volts and one denotes \verb|GND|, or $0$ volts. 
 \end{itemize}
+
+\begin{figure}[t]
+\begin{center}
+   \includegraphics[width=0.8\linewidth]{imgs/breadboard.jpg}
+\end{center}
+   \caption{A breadboard oriented like those oriented in images that we can process}
+\label{fig:board}
+\end{figure}
+
 
 \subsection{Schematic-drawing Software}
 
@@ -146,7 +156,13 @@ The next component of the project involved translating the component data into
 a schematic. Knowing all the pixel locations that make up a component, we
 calculate the end pixel positions of each component rounded to the nearest
 $10$. Because components are aligned to the hole-grid that is present on the
-breadboard,  
+breadboard, the calculated endpoints of the components can be used to place
+components on a grid in the schematic. The rounded values for the $x$ and $y$
+coordinates are used to place the components into their XML representations
+into the schematic. 
+
+After all components are identified and represented in their XML formats, a new
+file is constructed with the proper sschematic-XML information.    
 
 %-------------------------------------------------------------------------
 \section{Results}
@@ -154,6 +170,14 @@ breadboard,
 \subsection{Comparing Color-following and k-Means Clustering}
 
 TODO
+
+\subsection{Limitations}
+
+One limitation of our product as we've written it is that it can only handle
+breadboard circuits that are oriented horizontally as shown above in Figure
+\ref{fig:board}. This is because connectivity properties of the breadboard are
+geometry-dependent, and our program automatically assumes a particular
+orientation for the breadboard to infer connectivity.  
 
 %-------------------------------------------------------------------------
 \section{Future Work}
