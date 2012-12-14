@@ -123,7 +123,7 @@ restructuring tasks. A number of visually-interesting properties are listed here
 
 \begin{figure}[t]
 \begin{center}
-   %\includegraphics[width=0.8\linewidth]{imgs/breadboard.jpg}
+   \includegraphics[width=0.8\linewidth]{imgs/breadboard.jpg}
 \end{center}
    \caption{A breadboard oriented like those oriented in images that
      we can process, before any components have been added to it}
@@ -171,63 +171,132 @@ PCB-friendly file format has two main steps. First, the components must be
 identified in the image, and second, the components must be placed in a virtual
 grid representation independent of their relation in the image. 
 
-For our implementation we chose to use python and it's Tkinter, PIL, SciPy, and
-Numpy packages for ease of implementation, user interface, and speed. 
+For our implementation we chose to use python, along with the packages
+Tkinter, PIL, SciPy, and Numpy, for ease of implementation, user
+interface, and speed.
 
 %-------------------------------------------------------------------------
 \subsection{Segmentation into Circuit Components}
 
-At first we were unsure about which approach towards segmentation into image
-components was going to be more effective, so we tried two algorithms for
-detecting components. 
+We tried two different algorithms for segmenting and detecting
+components, described here. Both are color-based, and rely on the
+observation that the elements of a breadboard are brightly colored, so
+a rough segmentation can be found simply by grouping similarly-colored
+pixels together. Of the two algorithms we tried, the second algorithm
+is the one that was ultimately used in our complete system.
 
 \subsubsection{Color Following}
 
-As a first step to tackling the component segmentation problem, we took
-advantage of the natural segmentation in a breadboard picture according to
-color. Components on a breadboard are different colors that are localized in
-one location, so to take advantage of this, we developed an algorithm that
-``grows'' a component based on a given color pixel. A seed color is given to
-the algorithm and added to an active set of pixels. For each neighbor of each
-pixel in the active set, the decision is made whether that pixel is in the
-component if the pixel does not change the running RGB color-average of all the
-pixels current in the component. If a pixel is added to a component, it is then
-also added to the active set and the algorithm continues.     
+As a first step to tackling the component segmentation problem, we
+developed an algorithm that ``grows'' a component from a given pixel
+based on its color. The basic principle is to add pixels to the set of
+pixels in the component only if they do not change the average color
+of the component very much. More specifically, the algorithm works as
+follows: A seed pixel is given to the algorithm and added to an active
+set of pixels. For each neighbor of each pixel in the active set, the
+decision is made whether that pixel is in the component, if the pixel
+does not change the running RGB color-average of all the pixels
+current in the component. If a pixel is added to a component, it is
+then also added to the active set and the algorithm continues.
 
 The main problem with this algorithm is that it is highly dependent on the seed
-pixel to the image. If a pixel is chosen that is too dark for example, the
-running average that the algorithm will calculate will be off from the actual
-running average of the color of the component, so the algorithm will return
-incorrect results.   
+pixel. The algorithm performs well when the seed pixel is close to the
+average of the component it belongs to. However, if a seed pixel is
+chosen which is in a given component but significantly lighter or
+darker than average, the algorithm will perform poorly. Failure modes
+we encountered included identifying only part of a component, or
+particularly in the case of accidentally selecting too dark a pixel
+near the border, determining that the shadow of a component was part
+of the component and then spreading outward to include further
+component shadows. 
+
+An additional problem is that a set of seed pixels needs to be
+selected first before the algorithm can grow them into components. It
+is not clear how to find these seed pixels, since choosing every pixel
+is too computationally expensive, but some components might get missed if only a
+subset is selected.
 
 \subsubsection{Segmentation by Nearest Color}
 
-Idea is to segment on color by quantizing the color of the
-image and finding connected components in the quantized color space.
+We implemented a second color-based segmentation algorithm which is
+based on color quantization. Rather than operating locally by growing
+a component from a seed pixel, this ``nearest color'' algorithm
+operates over the entire image. The general idea is to quantize the
+image into a small number of colors based on the colors of the
+wires, chips, and other components, and then find connected components
+in that color space.
 
-Overall algorithm:
+More specifically, the algorithm works as follows:
 \begin{enumerate}
-\item Use a 3D clustering algorithm to find representative colors. We
-  wanted to use k-means, but it didn't work. The user picks these.
-\item Map colors to the nearest representative color- ie, divide up
-  the colorspace into Voronoi regions with Euclidean distance in
-  RGB-space.
-\item Find connected components of each color. Standard algorithms
-  work on binary masks, so run each color independently
-\item (Optional) Eliminate small connected components using binary
-  erosion/propagation. We got this part working, but it is not needed
-  in the current user-assisted workflow.
+\item \textbf{Select a palette of representative colors for
+  quantization.} Ideally, a 3D clustering algorithm in RGB-space would
+  be used in this step. We implemented a k-means clustering algorithm
+  for use in this step, but it was too computationally intensive when
+  run on the entire set of pixels to appropriate for in an interactive
+  tool, and when run on a downsampled set of pixels small enough to
+  run quickly, it found only shades of beige (the background
+  color). In our current implementation, the user must interactively
+  select colors for quantization.
+\item \textbf{Map image colors to the nearest palette color.}
+  In this step, each image point is mapped to the nearest color
+  in the palette defined in the previous step. In effect, this step
+  can be viewed as dividing up the color space into Voronoi regions
+  according to Euclidean distance in RGB-space from the palette
+  hues. The output of this step for a sample image is shown in Figure~\ref{fig:segment-quantized}.
+\item \textbf{Find connected components of each color.} For each
+  color, a connected components algorithm is run to identify
+  contiguous regions of that color. The labels returned for each color
+  are combined to form an overall labeling of the image into components.
+\item \textbf{Eliminate small connected components using
+  binary erosion/propagation.} The morphological operations of binary
+  erosion and propagation are used to eliminate small regions in
+  a binary image (such as our connected-components representation)
+  without distorting the contours of larger objects. This feature is
+  especially useful in anticipation of automatically selecting the
+  components to add to the final layout according to some inclusion
+  heuristic, because it cuts down on the number of
+  components that must be checked by the heuristic. The output of this
+  step for a sample image is shown in
+  Figure~\ref{fig:segment-connected} using the pyplot ``jet'' colormap
+  to visualize the labeled regions.
 \end{enumerate}
 
-Shows some problems, but generally works well enough for this application.
+This algorithm works surprisingly well on the breadboards we tested
+on. However, its most obvious flaw is inability to segment
+similarly-colored objects that are close together, because so much
+information about shading is discarded.
 
-\subsection{Occlusion Handling}
+One possible future direction we considered is the use of a
+``watershed'' algorithm to improve the segmentation. Watershed
+algorithms interpret greyscale images as relief maps and find the
+``basins''. In such a relief map, the shadows on the boundaries
+separating similarly-colored components would be visible, hopefully
+leading to improved segmentation performance.
 
-A problem with breadboard circuits is often that components (most often wires)
-are occluded from each other. This is a critical issue that in any finalized
-version of a product like this needs to be addressed. Because we ran into other
-issues with our approach, we were not able to effectively solve the occlusion
-problem.  
+\begin{figure}[ht]
+\centering
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/original_of_comp.png}
+	\caption{The original image.}
+	\label{fig:segment-orig}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/quantized_img2.png}
+	\caption{The image after color quantization.}
+	\label{fig:segment-quantized}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/connectedcomponents_jet_img2.png}
+	\caption{The image after identifying connected components and
+      performing binary erosion and propagation. The dark blue regions
+      are not identified as belonging to any component.}
+	\label{fig:segment-connected}
+\end{subfigure}
+\caption{The nearest-color segmentation algorithm}
+\end{figure}
 
 \subsection{Virtual Grid Representation}
 
@@ -246,11 +315,9 @@ file is constructed with the proper sschematic-XML information.
 %-------------------------------------------------------------------------
 \section{Results}
 
-\subsection{The Full Spectrum}
-
 Running our system using the nearest-color algorithm for segmentation yielded
 very positive results. Figure \ref{fig:origfull} shows the original image
-operated under, and Figure \ref{fig:segfull} shows the image after
+operated on, and Figure \ref{fig:segfull} shows the image after
 segmentation. The final schematic result (opened as a file in Eagle) is shown
 in Figure \ref{fig:schemfull}. 
 
@@ -269,7 +336,11 @@ between PIL, numpy, and Eagle.
 \begin{subfigure}[b]{\linewidth}
 	\centering
    \includegraphics[width=0.9\linewidth]{demos/full_pipeline2_segmentation.png}
-	\caption{The original image after the segmentation into components}
+	\caption{The image after the segmentation into components using
+      our interactive tool. This dark grey color scheme is fairly poor
+    for visualization, but we could not figure out how to persuade
+    Tkinter to display numeric labels using a more visible colormap
+    the way pyplot is able to.}
 	\label{fig:segfull}
 \end{subfigure}
 \begin{subfigure}[b]{\linewidth}
@@ -278,6 +349,8 @@ between PIL, numpy, and Eagle.
 	\caption{The schematic computed from the original image}
 	\label{fig:schemfull}
 \end{subfigure}
+\caption{The full pipeline as seen by the user, from bitmap image to
+  Eagle output}
 \end{figure}
 
 \subsection{Comparing Color-following and Segmentation by Nearest Color}
@@ -286,7 +359,7 @@ The color-following and nearest-color algorithms solve somewhat different
 problems. The color-following algorithm assumes a seed pixel (whether given
 programmatically or by a user) and constructs a component from that seed pixel,
 while the nearest-color algorithm separates the image into sections based on
-colors found in the entire image. In both bases, if the same component is
+colors found in the entire image. In both cases, if the same component is
 found, it should be found correctly. Given that the exact parameters for both
 algorithms were not perfectly tuned, these results are a comparison of the
 current implementations of the algorithms as we have them.
@@ -308,9 +381,10 @@ current implementations of the algorithms as we have them.
 \begin{subfigure}[b]{\linewidth}
 	\centering
    \includegraphics[width=0.9\linewidth]{demos/closest_color.png}
-   \caption{Note the same wire incorrectly detected by the closet-color algorithm}
+   \caption{Note the same wire incorrectly detected by the nearest-color algorithm}
 	\label{fig:ncolor}
 \end{subfigure}
+\caption{Comparison of color-following and nearest-color segmentation methods}
 \end{figure}
 
 Figure \ref{fig:origcomp} has the original image that we are analyzing. Figure
@@ -327,25 +401,62 @@ breadboard circuits that are oriented horizontally as shown above in Figure
 geometry-dependent, and our program automatically assumes a particular
 orientation for the breadboard to infer connectivity.  
 
+Additionally, we do not handle occlusions. A common problem with
+breadboard circuits is often that components (most often wires) are
+occluded from each other. This is a critical issue that in any
+finalized version of a product like this needs to be
+addressed.
+
 %-------------------------------------------------------------------------
 \section{Future Work}
 
-A few additions to our tool are desired by users. First, auto-aligning the
-wires in the schematic so that the ends meet at the same point in the schematic
-is desired - this makes the schematic physically correct. Another desired
-feature is to automatically identify where components are in the original image
-without the user having to specify any inputs, and another is to automatically
-identify components such as resistors, chips, LEDs, etc. to place them
-correctly in the Eagle schematic layout.  
+There are several desirable features that would be useful to add to
+this system:
+\begin{itemize}
+\item Automatically detecting components without any user
+  input. Currently, the user must help the system find the initial
+  colors. A more efficient color clustering algorithm would enable us
+  to remove this step of user input.
+\item Automatically selecting components for inclusion in the final
+  schematic. Currently the user must tell the system which connected
+  regions are wires or other components, and which regions should be
+  ignored. Using heuristics such as size, shape, and smoothness, the
+  system could determine on its own which segmented regions should be
+  further processed.
+  \item More sophisticated component-type identification to identify
+    regions as resistors, chips, LEDs, and so on. Currently we
+    identify and classify wires according to their aspect ratio /
+    length, but other heuristics could be used to identify other components.
+  \item More robust alignment of wires in the final schematic
+    would help ensure that the schematic is physically
+    correct. Currently the system aligns the wires to the nearest 10
+    pixels, which has been adequate in the cases that we have tested to
+    ensure that wires that should connect are mapped
+    accordingly. However, there is no verification or error correction
+    at this stage.
+\end{itemize}
 
 %-------------------------------------------------------------------------
-\section{Conclusion}
+\section{Conclusions}
 
-Knowing the space of images your tool is working under greatly improves the
-success of the tool you are building. It is important to know the advantages
-and disadvantages of your image space when designing algorithms to achieve
-vision-based goals. Transforming a circuit from the image space to the
-schematic circuit space is possible with the correct parameter tuning. 
+In conclusion, we have demonstrated a minimal working prototype of a
+system to automatically recognize breadboard circuits with user
+input. In this work, we developed and compared two separate algorithms
+for segmentation, including a novel color-following algorithm and a
+color-quantization algorithm based on connected components; we
+investigated using 3D clustering to find the main colors in the image;
+we developed infrastructure to output our intermediate representation
+of components to the Eagle format for PCB design; and we connected the
+entire end-to-end pipeline from bitmap to Eagle format in a unified
+GUI tool which interactively and responsively incorporates user input.
+
+Lessons we learned included (a) Knowing the space of images your tool
+is working under greatly improves the success of the tool you are
+building. It is important to know the advantages and disadvantages of
+your image space when designing algorithms to achieve vision-based
+goals, and (b) It is possible to transform a circuit from the image
+space to the schematic circuit space, and is likely to be even more
+effective with more sophisticated methods.
 
 {\small
 \bibliographystyle{ieee}
