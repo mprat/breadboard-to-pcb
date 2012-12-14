@@ -231,22 +231,24 @@ More specifically, the algorithm works as follows:
   In this step, each image point is mapped to the nearest color
   in the palette defined in the previous step. In effect, this step
   can be viewed as dividing up the color space into Voronoi regions
-  according to Euclidean distance in RGB-space from the palette hues.
+  according to Euclidean distance in RGB-space from the palette
+  hues. The output of this step for a sample image is shown in Figure~\ref{fig:segment-quantized}.
 \item \textbf{Find connected components of each color.} For each
   color, a connected components algorithm is run to identify
   contiguous regions of that color. The labels returned for each color
   are combined to form an overall labeling of the image into components.
-\item (Optional) \textbf{Eliminate small connected components using
+\item \textbf{Eliminate small connected components using
   binary erosion/propagation.} The morphological operations of binary
   erosion and propagation are used to eliminate small regions in
   a binary image (such as our connected-components representation)
-  without distorting the contours of larger objects. We implemented
-  this feature in anticipation of automatically selecting the
+  without distorting the contours of larger objects. This feature is
+  especially useful in anticipation of automatically selecting the
   components to add to the final layout according to some inclusion
-  heuristic, because it significantly cuts down on the number of
-  components that must be checked by the heuristic. However, in the
-  current user-assisted workflow, eliminating specks is not necessary
-  or helpful.
+  heuristic, because it cuts down on the number of
+  components that must be checked by the heuristic. The output of this
+  step for a sample image is shown in
+  Figure~\ref{fig:segment-connected} using the pyplot ``jet'' colormap
+  to visualize the labeled regions.
 \end{enumerate}
 
 This algorithm works surprisingly well on the breadboards we tested
@@ -260,6 +262,30 @@ algorithms interpret greyscale images as relief maps and find the
 ``basins''. In such a relief map, the shadows on the boundaries
 separating similarly-colored components would be visible, hopefully
 leading to improved segmentation performance.
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/original_of_comp.png}
+	\caption{The original image.}
+	\label{fig:segment-orig}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/quantized_img2.png}
+	\caption{The image after color quantization.}
+	\label{fig:segment-quantized}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/connectedcomponents_jet_img2.png}
+	\caption{The image after identifying connected components and
+      performing binary erosion and propagation. The dark blue regions
+      are not identified as belonging to any component.}
+	\label{fig:segment-connected}
+\end{subfigure}
+\end{figure}
 
 \subsection{Virtual Grid Representation}
 
@@ -300,7 +326,10 @@ between PIL, numpy, and Eagle.
 	\centering
    \includegraphics[width=0.9\linewidth]{demos/full_pipeline2_segmentation.png}
 	\caption{The image after the segmentation into components using
-      our interactive tool}
+      our interactive tool. This dark grey color scheme is fairly poor
+    for visualization, but we could not figure out how to persuade
+    Tkinter to display numeric labels using a more visible colormap
+    the way pyplot is able to.}
 	\label{fig:segfull}
 \end{subfigure}
 \begin{subfigure}[b]{\linewidth}

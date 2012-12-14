@@ -16,7 +16,8 @@ initBeige = np.array((213, 190, 148))
 initRed = np.array((152, 55, 29))
 initGreen = np.array((37, 55, 39))
 initBlack = np.array((43, 42, 47))
-initSilver = np.array((130, 129, 125))
+initSilver = np.array((170, 150, 140))
+#initSilver = np.array((130, 129, 125))
 initOrange = np.array((126, 69, 50))
 allColors = [initBeige, initRed, initGreen, initBlack, initSilver, initOrange]
 
