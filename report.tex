@@ -309,8 +309,14 @@ components on a grid in the schematic. The rounded values for the $x$ and $y$
 coordinates are used to place the components into their XML representations
 into the schematic. 
 
-After all components are identified and represented in their XML formats, a new
-file is constructed with the proper sschematic-XML information.    
+Eagle is a program that is used by hobbyists and hardware circuit designers to
+draw schematics and PCB components that can be sent to production companies to
+manufacture. Schematic files in the Eagle format are fundamentally XML files -
+each component is represented by a speecific format of XML. Each component
+found by our system is translatd into this specific XML formula that can then
+be put together with special XML headers to make a schematic file. After all
+components are identified and represented in their XML formats, a new file is
+constructed with the proper schematic-XML information.    
 
 %-------------------------------------------------------------------------
 \section{Results}
