@@ -238,7 +238,37 @@ file is constructed with the proper sschematic-XML information.
 
 \subsection{The Full Spectrum}
 
-TODO
+Running our system using the nearest-color algorithm for segmentation yielded
+very positive results. Figure \ref{fig:origfull} shows the original image
+operated under, and Figure \ref{fig:segfull} shows the image after
+segmentation. The final schematic result (opened as a file in Eagle) is shown
+in Figure \ref{fig:schemfull}. 
+
+Notice how the schematic figure is upside down of the original image and it's
+segmentation; this is a result of the difference in indexing conventions
+between PIL, numpy, and Eagle.
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/full_pipeline2_original.png}
+	\caption{The original image}
+	\label{fig:origfull}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/full_pipeline2_segmentation.png}
+	\caption{The original image after the segmentation into components}
+	\label{fig:segfull}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+	\centering
+   \includegraphics[width=0.9\linewidth]{demos/full_pipeline2_schematic.png}
+	\caption{The schematic computed from the original image}
+	\label{fig:schemfull}
+\end{subfigure}
+\end{figure}
 
 \subsection{Comparing Color-following and Segmentation by Nearest Color}
 
