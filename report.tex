@@ -285,6 +285,7 @@ leading to improved segmentation performance.
       are not identified as belonging to any component.}
 	\label{fig:segment-connected}
 \end{subfigure}
+\caption{The nearest-color segmentation algorithm}
 \end{figure}
 
 \subsection{Virtual Grid Representation}
@@ -338,6 +339,8 @@ between PIL, numpy, and Eagle.
 	\caption{The schematic computed from the original image}
 	\label{fig:schemfull}
 \end{subfigure}
+\caption{The full pipeline as seen by the user, from bitmap image to
+  Eagle output}
 \end{figure}
 
 \subsection{Comparing Color-following and Segmentation by Nearest Color}
@@ -368,9 +371,10 @@ current implementations of the algorithms as we have them.
 \begin{subfigure}[b]{\linewidth}
 	\centering
    \includegraphics[width=0.9\linewidth]{demos/closest_color.png}
-   \caption{Note the same wire incorrectly detected by the closet-color algorithm}
+   \caption{Note the same wire incorrectly detected by the nearest-color algorithm}
 	\label{fig:ncolor}
 \end{subfigure}
+\caption{Comparison of color-following and nearest-color segmentation methods}
 \end{figure}
 
 Figure \ref{fig:origcomp} has the original image that we are analyzing. Figure
@@ -423,7 +427,7 @@ this system:
 \end{itemize}
 
 %-------------------------------------------------------------------------
-\section{Contributions}
+\section{Conclusions}
 
 In conclusion, we have demonstrated a minimal working prototype of a
 system to automatically recognize breadboard circuits with user
