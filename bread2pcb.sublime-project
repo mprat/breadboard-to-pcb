@@ -3,7 +3,7 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "/Users/rdeits/AeroFS/Projects/breadboard-to-pcb"
+			"path": "."
 		}
 	]
 }
