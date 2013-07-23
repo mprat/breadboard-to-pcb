@@ -1,4 +1,5 @@
 import time
+# import PIL.Image as Image
 import Image
 import sys
 import getopt
@@ -99,7 +100,7 @@ def makeComponent(comp, firstpt):
     checked = set()
 
     #need to seed the wire with the first color
-    comp.addPixelLoc(firstpt, getColor(firstpt))    
+    comp.addPixelLoc(firstpt, getColor(firstpt))
 
     loopcounter = 0
     while len(ptstocheck) > 0:
@@ -144,7 +145,7 @@ def makeComponentCallback(event):
     components.append(Component(arr.shape[0], arr.shape[1]))
     #wires[-1].addPixelLoc([event.y, event.x])
     makeComponent(components[-1], (event.y, event.x))
-    seeComponent(components[-1])    
+    seeComponent(components[-1])
     components[-1].getLeftMostPixel()
     print "End click. Ready to process another"
 
@@ -155,7 +156,7 @@ def segmentationCallback(event):
         print "Finding component at", int(c[0]), int(c[1])
         components.append(Component(arr.shape[0], arr.shape[1]))
         makeComponent(components[-1], (int(c[0]), int(c[1])))
-        seeComponent(components[-1])    
+        seeComponent(components[-1])
     print "Done"
 
 def showClickCallback(event):
@@ -177,29 +178,29 @@ def accumulateClicksCallback(event):
 
 class ColorSelect(ttk.Frame):
     def __init__(self, parent):
-        ttk.Frame.__init__(self, parent)            
-        self.parent = parent        
+        ttk.Frame.__init__(self, parent)
+        self.parent = parent
         self.initUI()
-        
+
     def initUI(self):
         self.parent.title("Buttons")
         self.style = ttk.Style()
         self.style.theme_use("default")
-        
+
         frame = ttk.Frame(self, relief=RAISED, borderwidth=1)
         frame.pack(fill=BOTH, expand=1)
-        
+
         self.pack(fill=BOTH, expand=1)
-                
+
         numColors = 5
         self.colorButton = list()
         for i in range(numColors):
             self.colorButton.append(tk.Button(self, text="Color " + str(i), foreground="#000000", background="#FFFFFF", command = (lambda x: lambda: changeButtonColor(self, x))(i)))
             self.colorButton[i].pack(side=LEFT, padx=5, pady=5)
-        
+
         self.okButton = tk.Button(self, text="OK", command = (lambda: confirmColors(self)))
         self.okButton.pack(side=RIGHT, padx=5, pady=5)
-        
+
         frameimage = ImageTk.PhotoImage(im, master=root)
         self.panel1 = tk.Label(frame, image=frameimage)
         self.panel1.image = frameimage
@@ -230,7 +231,7 @@ def confirmColors(frame):
     (c,n) = seg.connectedComponents(np.array(b), palette)
     frame.labels = c
     frame.nlabels = n
-    
+
     # Set up new GUI appearance/functionality
     print "Displaying result"
     c_im = Image.fromarray(c)
@@ -272,7 +273,7 @@ def loadIm(filename):
     im = Image.open("imgs/"+ filename)
     global arr
     arr = np.array(im) #r = arr[:, :, 0] etc.
-    print im.format, im.size, im.mode 
+    print im.format, im.size, im.mode
     return im
 
 def main():
@@ -281,15 +282,15 @@ def main():
     Second argument should be 'show' or other, to show or not show images
     """
     try:
-	opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
+        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
     except getopt.error, msg:
-	print msg
-	print "for help use --help"
-	sys.exit(2)
+        print msg
+        print "for help use --help"
+        sys.exit(2)
     for o, a in opts:
-	if o in ("-h", "--help"):
-	    print main.__doc__
-	    sys.exit(0)
+        if o in ("-h", "--help"):
+            print main.__doc__
+            sys.exit(0)
     if (len(args) != 2):
         print "Incorrect command line arguments. For help use --help"
         sys.exit(0)
@@ -297,12 +298,12 @@ def main():
         # Set up configuration
         showstr = sys.argv[2]
         global show
-       	show = (showstr == 'show')
+        show = (showstr == 'show')
 
         # Load the image
         filename = sys.argv[1]
         im = loadIm(filename)
-        
+
         # Set up main panel with appropriate callback
         # frameimage = ImageTk.PhotoImage(im, master=root)
         # panel1 = tk.Label(root, image=frameimage)
