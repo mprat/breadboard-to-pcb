@@ -35,3 +35,29 @@ TODO:
 * option to change between using running-average distance or "change the average in a significant way" (RANSAC)
 * differentiate between components
 * where the user clicks, generate a few "component models" and ask the user to choose the best one?
+
+
+====================
+(Michele and Robin's hacking)
+
+Decent set of parameters to start detecting blobs with:
+sbd_params = cv2.SimpleBlobDetector_Params()
+        sbd_params.blobColor = 0
+        sbd_params.filterByArea = True
+        sbd_params.filterByCircularity = False
+        sbd_params.filterByColor = True
+        sbd_params.filterByConvexity = False
+        sbd_params.filterByInertia = False
+        sbd_params.maxArea = 100
+        sbd_params.minArea = 10
+        sbd_params.maxCircularity = 0
+        sbd_params.minCircularity = 0
+        sbd_params.maxConvexity = 0
+        sbd_params.minConvexity = 0
+        sbd_params.maxInertiaRatio = 0
+        sbd_params.minInertiaRatio = 0
+        sbd_params.maxThreshold = 100
+        sbd_params.minThreshold = 10
+        sbd_params.minDistBetweenBlobs = 10
+        sbd_params.minRepeatability = 2
+        sbd_params.thresholdStep = 10

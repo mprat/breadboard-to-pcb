@@ -12,21 +12,28 @@ sbd_params = cv2.SimpleBlobDetector_Params()
     # print p
 
 #to modify any of the parameters below, just uncomment and change the value
-# sbd_params.blobColor = 0
-# sbd_params.filterByArea = 0
-# sbd_params.filterByCircularity = 0
-# sbd_params.filterByColor = 0
-# sbd_params.filterByConvexity = 0
-# sbd_params.filterByInertia = 0
-# sbd_params.maxArea = 0
-# sbd_params.maxCircularity = 0
-# sbd_params.maxConvexity = 0
-# sbd_params.maxInertiaRatio = 0
-# sbd_params.maxThreshold = 0
-# sbd_params.minDistBetweenBlobs = 0
-# sbd_params.minRepeatability = 0
-# sbd_params.minThreshold = 0
-# sbd_params.thresholdStep = 0
+sbd_params = cv2.SimpleBlobDetector_Params()
+sbd_params.blobColor = 0
+sbd_params.filterByArea = True
+sbd_params.filterByCircularity = False
+sbd_params.filterByColor = True
+sbd_params.filterByConvexity = False
+sbd_params.filterByInertia = False
+sbd_params.maxArea = 100
+sbd_params.minArea = 10
+sbd_params.maxCircularity = 0
+sbd_params.minCircularity = 0
+sbd_params.maxConvexity = 0
+sbd_params.minConvexity = 0
+sbd_params.maxInertiaRatio = 0
+sbd_params.minInertiaRatio = 0
+sbd_params.maxThreshold = 100
+sbd_params.minThreshold = 10
+sbd_params.minDistBetweenBlobs = 10
+sbd_params.minRepeatability = 2
+sbd_params.thresholdStep = 10
+
+sbd = cv2.SimpleBlobDetector(sbd_params)
 
 print 'blobColor', sbd_params.blobColor
 print 'filterByArea', sbd_params.filterByArea
@@ -35,13 +42,16 @@ print 'filterByColor', sbd_params.filterByColor
 print 'filterByConvexity', sbd_params.filterByConvexity
 print 'filterByInertia', sbd_params.filterByInertia
 print 'maxArea', sbd_params.maxArea
+print 'minArea', sbd_params.minArea
 print 'maxCircularity', sbd_params.maxCircularity
+print 'minCircularity', sbd_params.minCircularity
 print 'maxConvexity', sbd_params.maxConvexity
 print 'maxInertiaRatio', sbd_params.maxInertiaRatio
+print 'minInertiaRatio', sbd_params.minInertiaRatio
 print 'maxThreshold', sbd_params.maxThreshold
+print 'minThreshold', sbd_params.minThreshold
 print 'minDistBetweenBlobs', sbd_params.minDistBetweenBlobs
 print 'minRepeatability', sbd_params.minRepeatability
-print 'minThreshold', sbd_params.minThreshold
 print 'thresholdStep', sbd_params.thresholdStep
 
 sbd = cv2.SimpleBlobDetector(sbd_params)
