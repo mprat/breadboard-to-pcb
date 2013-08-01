@@ -7,6 +7,10 @@ cv2.waitKey(0)
 #blob detection
 sbd = cv2.SimpleBlobDetector()
 
+#display parameters in simple blob detector
+for p in sbd.getParams():
+    print p, sbd.paramType(p)
+
 keypoints = sbd.detect(img) #returns an array of KeyPoints
 
 #display keypoints on the original image
