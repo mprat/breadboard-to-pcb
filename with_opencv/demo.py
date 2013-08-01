@@ -5,11 +5,12 @@ cv2.imshow('window_title', img)
 cv2.waitKey(0)
 
 #blob detection
-sbd = cv2.SimpleBlobDetector()
+sbd_params = cv2.SimpleBlobDetector_Params()
+sbd = cv2.SimpleBlobDetector(sbd_params)
 
 #display parameters in simple blob detector
 for p in sbd.getParams():
-    print p, sbd.paramType(p)
+    print p
 
 keypoints = sbd.detect(img) #returns an array of KeyPoints
 
