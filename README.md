@@ -41,6 +41,8 @@ TODO:
 (Michele and Robin's hacking)
 
 Decent set of parameters to start detecting blobs with:
+
+```
 sbd_params = cv2.SimpleBlobDetector_Params()
         sbd_params.blobColor = 0
         sbd_params.filterByArea = True
@@ -61,3 +63,4 @@ sbd_params = cv2.SimpleBlobDetector_Params()
         sbd_params.minDistBetweenBlobs = 10
         sbd_params.minRepeatability = 2
         sbd_params.thresholdStep = 10
+```
